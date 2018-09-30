@@ -13,6 +13,7 @@ import ZForm from '../GasEngine/Forms/ZForm';
 import RForm from '../GasEngine/Forms/RForm';
 import μform from '../GasEngine/Forms/μForm';
 import OtherVarForm from '../GasEngine/Forms/OtherVarForm';
+import VibrationAnimated from './VibrationAnimated';
 import './style.css';
 
 @inject('vibrationStore', 'gasEngineStore')
@@ -92,6 +93,9 @@ class Vibration extends Component {
                   </div>
                   <div className='default_margin-top'>
                     <VarCharts />
+                  </div>
+                  <div className='default_margin-top'>
+                    <VibrationAnimated />
                   </div>
                 </div>
               )

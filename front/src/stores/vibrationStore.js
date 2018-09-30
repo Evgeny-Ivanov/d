@@ -51,7 +51,6 @@ class VibrationStore {
         '/cal_vibration_with_gas_engine_api/',
         { params: { ...this.convertToSI(), ...gasEngineStore.convertToSI() } },
       );
-      console.log(res.data.y_res_arr);
       this.charts = res.data;
     } catch (e) {
       alert(`Ошибка: ${e.response.data}`);

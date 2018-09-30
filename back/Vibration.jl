@@ -80,16 +80,17 @@ module Vibration
 		h_г = required, # плечо момента от силы газовой каморы
 		n = required
 		)
-		y = Array{Float64}(undef, 5000)
-		v = Array{Float64}(undef, 5000)
-		y1 = Array{Float64}(undef, 5000)
-		q = Array{Float64}(undef, 5000)
-		f = Array{Float64}(undef, 5000)
-		fm = Array{Float64}(undef, 5000)
-		u = Array{Float64}(undef, 5000)
-		fp = Array{Float64}(undef, 5000)
-		y_stationary = Array{Float64}(undef, 5000)
-		x_stationary = Array{Float64}(undef, 5000)
+		y = Array{Float64}(undef, 500)
+		v = Array{Float64}(undef, 500)
+		y1 = Array{Float64}(undef, 500)
+		q = Array{Float64}(undef, 500)
+		f = Array{Float64}(undef, 500)
+		fm = Array{Float64}(undef, 500)
+		u = Array{Float64}(undef, 500)
+		fp = Array{Float64}(undef, 500)
+		y_anim = Array{Float64}[]
+		y_stationary = Array{Float64}(undef, 500)
+		x_stationary = Array{Float64}(undef, 500)
 
 
 		t_res = Float64[]
@@ -217,12 +218,12 @@ module Vibration
 				y[i]=y1[i]
 			end
 
-			if flag == 50
+			if flag == 200
 				o = (y[n]-y[n-6])/(6*dx) * 57.2958
 				push!(o_res, o)
 				push!(t_res, t)
 				push!(y_res, y[n])
-
+				push!(y_anim, copy(y))
 
 				flag = 0
 			end
@@ -239,6 +240,7 @@ module Vibration
 			"t" => t_res,
 			"y" => y_res,
 			"o" => o_res,
+			"y_anim" => y_anim,
 
 			"y_stationary" => y_stationary,
 			"x_stationary" => x_stationary,

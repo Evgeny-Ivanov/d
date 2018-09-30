@@ -22,8 +22,8 @@ class PowderForm extends Component {
           <Input
             label='Сила пороха'
             dimension='МДж/кг'
-            name='f_'
-            value={input.f_}
+            name='f'
+            value={input.f}
             onChange={this.handleChange}
           />
 
