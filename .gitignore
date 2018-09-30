@@ -1,0 +1,6 @@
+.idea/
+front/node_modules/
+front/build/
+front/yarn.lock
+front/package-lock.json
+back/.percent
