@@ -1,7 +1,7 @@
 module GasEngine
     using DifferentialEquations: ODEProblem, RK4, solve
 
-    function cal_gas_engine(;
+    function cal_gas_engine(; # функция расчета газового двигателя
         l_д = required,
 
         # Параметры газового двигателя 
@@ -114,6 +114,7 @@ module GasEngine
 
         p_max = p_max_кр * ((1.15 * N_кр * φ) / (K + ω / (2 * q)))
 
+        #
         ξ_1(x, y) = x >= p_0 || y > 0 ? 1 : 0
         ξ_2(x) = 0 <= x <= z_k ? 1 : 0
         ξ_3(x) = x <= l_д ? 1 : 0
@@ -203,7 +204,6 @@ module GasEngine
 
             return M_пр3
         end
-
 
         function ode_for_τ(τ)
             I_kτ = I_k * (1 - K_I * (τ - T))

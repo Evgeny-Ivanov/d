@@ -1,5 +1,7 @@
 module Helpers
 	function convert_julia_chart_arr_in_js_arr(u, index)
+		# ничкго полезного, просто преобразует данные возвращаемые
+		# библиотечкой для интегрирования, в более удобный для дальнейшего использования вид
 		result_arr = Float64[]
 		for i in 1:length(u) - 1
 			push!(result_arr, u[i][index])
@@ -8,6 +10,7 @@ module Helpers
 	end
 
 	function find_first_item(arr, item, last_index)
+		# функция находящая индекс первого элемента массива arr, большего чем item
 		for i in last_index:length(arr) - 1
 			if arr[i] >= item
 				return i

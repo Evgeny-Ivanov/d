@@ -1,26 +1,26 @@
 module Vibration
-	using GasEngine: cal_gas_engine
+	using GasEngine: cal_gas_engine # импортируем из файл GasEngine функцию для расчета БГД
 	using Helpers: convert_julia_chart_arr_in_js_arr, find_first_item
-	using experiment_data: p_г_э, t_г_э
+	using experiment_data: p_г_э, t_г_э # импортирум массивы экспериментальных данных
 
-	function cal_vibration_with_gas_engine(;
-		d = required, 
-		l_го = required, 
-		l_д = required,
-		d_п = required, 
+	function cal_vibration_with_gas_engine(; # расчет задачи коллебаний для одного положения камеры вместе и БГД
+		d = required, # внутренний диаметр ствола
+		l_го = required, # положение газовой камеры
+		l_д = required, # длина ствола
+		d_п = required, # диаметр поршня
 
-		e = required, 
-		ro = required,
-		d1 = required,
-		q1 = required,
-		q2 = required,
-		gp = required,
-		cit = required,
-		h_г = required,
-		n_dx = required,
-		kwargs...
+		e = required, # модуль Юнга, МПа
+		ro = required, # плотность,кг/м³
+		d1 = required, # наружный диаметр ствола, мм
+		q1 = required, # кг, масса газовой каморы
+		q2 = required, # кг, масса надульного устройства
+		gp = required, # г, масса пули
+		cit = required, # соотношение между шагом по времени и координате
+		h_г = required, # мм, плечо момента от силы газовой каморы
+		n_dx = required, # на сколько точек по координате разделять длину ствола
+		kwargs... # остальные переменные, необходимы для решения бгд
 		)
-		result1 = cal_gas_engine(;
+		result1 = cal_gas_engine(; # считаем задачу БГД
 			kwargs...,
 			d = d, 
 			l_го = l_го, 
@@ -28,12 +28,13 @@ module Vibration
 			d_п = d_п
 		)
 
+		# распаковываем результаты расчета БГД, для дальнейшего использования
 		u = result1["charts"]["u"]
 		t = result1["charts"]["t"]
-		p = convert_julia_chart_arr_in_js_arr(u, 1)
+		p = convert_julia_chart_arr_in_js_arr(u, 1) # convert_julia_chart_arr_in_js_arr - просто приводит данные к такому ввиду, который нам нужен дальше
 		v = convert_julia_chart_arr_in_js_arr(u, 5)
 		l = convert_julia_chart_arr_in_js_arr(u, 6)
-		p_п = convert_julia_chart_arr_in_js_arr(u, 11)
+		p_п = convert_julia_chart_arr_in_js_arr(u, 11) # давление в газовой камере
 
 		result2 = cal_vibration(
 			t_ = t,
@@ -59,14 +60,14 @@ module Vibration
 		return result2
 	end
 
-	function cal_vibration(;
-		t_ = required,
-		p_ = required,
-		v_ = required,
-		l_ = required,
-		p_п_ = required,
+	function cal_vibration(; # расчет задачи коллебаний для одного положения газовой камеры
+		t_ = required, # результаты расчета бгд
+		p_ = required, # результаты расчета бгд
+		v_ = required, # результаты расчета бгд
+		l_ = required, # результаты расчета бгд
+		p_п_ = required, # результаты расчета бгд
 
-		xm1 = required,
+		xm1 = required, # положение газовой камеры
 		e = required, # модуль Юнга 
 		ro = required, # плотность материала ствола
 		d0 = required, # внутренний диаметр ствола
@@ -88,9 +89,9 @@ module Vibration
 		fm = Array{Float64}(undef, 500)
 		u = Array{Float64}(undef, 500)
 		fp = Array{Float64}(undef, 500)
-		y_anim = Array{Float64}[]
-		y_stationary = Array{Float64}(undef, 500)
-		x_stationary = Array{Float64}(undef, 500)
+		y_anim = Array{Float64}[] # массив резултатов для построения анимации коллебаний
+		y_stationary = Array{Float64}(undef, 500) # массив резултатов для стационарного прогиба
+		x_stationary = Array{Float64}(undef, 500) # массив резултатов для стационарного прогиба
 
 
 		t_res = Float64[]
@@ -141,7 +142,7 @@ module Vibration
 		y_stationary[1] = y[1]
 		x_stationary[1] = 0
 		for i in 1:n
-			y[i+1]=y[i]+0.5*(u[i]+u[i+1])*dx
+			y[i+1] = y[i]+0.5*(u[i]+u[i+1])*dx
 			y_stationary[i+1] = y[i+1]
 			x_stationary[i+1] = x_stationary[i] + dx
 		end
@@ -156,14 +157,14 @@ module Vibration
 		flag = 0
 		t_last_index = 1
 		t_start = 0
-		asdf = 0
+		bgd_start_flag = 0
 		while true
 			for i in 1:n1
 				fp[i]=0.
 			end
 
 			cf=0.
-			t_last_index = find_first_item(t_, t, t_last_index)
+			t_last_index = find_first_item(t_, t, t_last_index) # вспомогательная функция, находящая индекс массива результатов БГД для текущего t
 			vp = v_[t_last_index] # текущая скорость пули
 			xp = l_[t_last_index] # текущая координата пули
 
@@ -183,14 +184,14 @@ module Vibration
 				end
 			end
 
-			if xp >= xm1
+			if xp >= xm1 # если коорданата пули больше положения камеры (начался отвод газов)
 				p_п = p_п_[t_last_index] # давление в газовой каморе
 
 				# эксперимент
 				if p_п > 0
-					if asdf == 0
-						t_start = t
-						asdf = 1
+					if bgd_start_flag == 0
+						t_start = t # запоминаем время начала отвода газов
+						bgd_start_flag = 1 # что бы опять не войти в этот блок
 					end
 					index = find_first_item(t_г_э, t*10.0^3 - t_start*10.0^3, 1)
 					p_п = p_г_э[index] # давление в газовой каморе
@@ -199,7 +200,7 @@ module Vibration
 				# приближенный расчет
 				# p_п = 4 * 10^6
 				cme = p_п * S_п * h_г
-				qmom = 0.5 * cme / dx2 
+				qmom = 0.5 * cme / dx2 # сила от изгибающего момента
 				fp[im2-1] = fp[im2-1] - qmom
 				fp[im2+1] = fp[im2+1] + qmom
 			end
@@ -218,8 +219,8 @@ module Vibration
 				y[i]=y1[i]
 			end
 
-			if flag == 200
-				o = (y[n]-y[n-6])/(6*dx) * 57.2958
+			if flag == 200 # результатов очень много, и сохраняем только каждую 200ю
+				o = (y[n]-y[n-6])/(6*dx) * 57.2958 # находим угол наклона дульного среза (6 - для того что бы график был более гладким)
 				push!(o_res, o)
 				push!(t_res, t)
 				push!(y_res, y[n])
@@ -248,26 +249,26 @@ module Vibration
 	end
 
 
-	function cal_var_vibration(;
-		n_dx_г = required,
-		l_д = required,
-		kwargs...
+	function cal_var_vibration(; # функция расчета коллебаний для разных положений газовой камеры
+		n_dx_г = required, # количество положений газовой камеры, для которых будет считаться задача коллебаний
+		l_д = required, # длина ствола
+		kwargs... # остальные переменные, необходимы для решения бгд
 		)
-		x_res = Float64[]
-		o_res = Float64[]
-		y_res = Float64[]
+		x_res = Float64[] # массив положений газовой камеры
+		o_res = Float64[] # массив углов наклона дульного среза
+		y_res = Float64[] # массив отклонений дульного среза
 
 		file = open(".percent", "w")
 
-		xm1 = 0.02
+		xm1 = 0.02 # начальное положение для газовой камеры (для xm1=0 не считает)
 		dx = l_д / Int(n_dx_г) # шаг, для варьирования положения газовой каморы
 		i = 0
-		while xm1 < l_д
+		while xm1 < l_д # перебираем положения газовой камеры
 			print("$i ")
-			result = cal_vibration_with_gas_engine(;kwargs..., l_го=xm1, l_д=l_д)
+			result = cal_vibration_with_gas_engine(;kwargs..., l_го=xm1, l_д=l_д) # считаем коллебания для текущего положения газовой камеры
 			push!(x_res, xm1)
-			push!(o_res, result["o"][end])
-			push!(y_res, result["y"][end])
+			push!(o_res, result["o"][end]) # result["o"][end] - берет o для дульного среза (end)
+			push!(y_res, result["y"][end]) # result["н"][end] - берет y для дульного среза (end)
 			xm1 += dx
 			i += 1
 			seekstart(file)
@@ -284,5 +285,5 @@ module Vibration
 		)
 	end
 
-export cal_var_vibration, cal_vibration_with_gas_engine
+export cal_var_vibration, cal_vibration_with_gas_engine # даем возможность использовать эти функции в других файлах
 end
