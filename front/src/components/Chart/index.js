@@ -1,27 +1,36 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Plot from 'react-plotly.js';
 
-class Result extends Component {
-  static propTypes = {
-    title: PropTypes.string.isRequired,
-    x: PropTypes.array.isRequired,
-    y: PropTypes.array.isRequired,
-  };
-
+class Chart extends Component {
   render() {
+    let {x, y, xArr, yArr} = this.props;
+
+    let data = [{
+        type: 'scatter',
+        mode: 'lines+points',
+        x: x,
+        y: y,
+        marker: { color: 'red' },
+        line: { shape: 'spline' },
+    }];
+
+    if (xArr && yArr) {
+        data = [];
+        for(let i = 0; i< xArr.length; i++) {
+            data.push({
+                type: 'scatter',
+                mode: 'lines+points',
+                x: xArr[i],
+                y: yArr[i],
+                marker: { color: 'red' },
+                line: { shape: 'spline' },
+            });
+        }
+    }
+
     return (
       <Plot
-        data={[ // массив - можно разместить на одном холсте несколько графиков
-          {
-            type: 'scatter',
-            mode: 'lines+points',
-            x: this.props.x,
-            y: this.props.y,
-            marker: { color: 'red' },
-            line: { shape: 'spline' },
-          }]}
-
+        data={data}
         layout={{
           height: 400,
           width: 700,
@@ -40,4 +49,4 @@ class Result extends Component {
   }
 }
 
-export default Result;
+export default Chart;
