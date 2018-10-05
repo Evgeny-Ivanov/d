@@ -10,17 +10,15 @@ class VibrationAnimated extends Component {
     state = {
         x: [],
         y: [],
-        title: 'none'
+        title: 'none',
+        speed: 10,
     };
 
-    runAnimated = () => {
+    runAnimated = (index=0) => {
         let { charts } = this.props.vibrationStore;
         if (!charts || !charts.y_anim) return;
 
         this.stopAnimated();
-
-        let index = 0;
-        let indexStep = 10;
 
         this.timer = setInterval(() => {
             let { charts, input } = this.props.vibrationStore;
@@ -31,7 +29,8 @@ class VibrationAnimated extends Component {
                 title: `t = ${charts.t[index]} c.`
             });
 
-            index += indexStep;
+            index += this.state.speed;
+            this.index = index;
             if (index >= charts.y_anim.length) this.stopAnimated();
         }, 100);
 
@@ -40,6 +39,26 @@ class VibrationAnimated extends Component {
     stopAnimated = () => {
         if(this.timer) {
             clearInterval(this.timer);
+        }
+    };
+
+    incSpeed = () => {
+      this.setState({
+          speed: this.state.speed + 10
+      })
+    };
+
+    decSpeed = () => {
+        if (this.state.speed - 10 > 0) {
+            this.setState({
+                speed: this.state.speed - 10
+            })
+        }
+    };
+
+    resumeAnimated = () => {
+        if(this.index) {
+            this.runAnimated(this.index);
         }
     };
 
@@ -73,8 +92,17 @@ class VibrationAnimated extends Component {
                     }}
                 />
 
-                <Button onClick={() => this.runAnimated()} >Старт</Button>
-                <Button onClick={() => this.stopAnimated()} >Стоп</Button>
+                <div style={{marginTop: 10}}>
+                    <Button onClick={() => this.runAnimated()} >Старт</Button>
+                    <Button onClick={() => this.stopAnimated()} >Стоп</Button>
+                    <Button onClick={() => this.resumeAnimated()} >Продолжить</Button>
+                </div>
+
+                <div style={{marginTop: 10}}>
+                    <Button onClick={() => this.incSpeed()} >Увеличить скорость</Button>
+                    <Button onClick={() => this.decSpeed()} >Уменьшить скорость</Button>
+                    <span style={{marginLeft: 10}}>Скорость: {this.state.speed}</span>
+                </div>
             </div>
         );
     }
