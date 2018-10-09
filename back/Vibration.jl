@@ -1,4 +1,5 @@
 module Vibration
+	import DataFrames, XLSX
 	using GasEngine: cal_gas_engine # импортируем из файл GasEngine функцию для расчета БГД
 	using Helpers: convert_julia_chart_arr_in_js_arr, find_first_item
 	using experiment_data: p_г_э, t_г_э # импортирум массивы экспериментальных данных
@@ -81,17 +82,24 @@ module Vibration
 		h_г = required, # плечо момента от силы газовой каморы
 		n = required
 		)
-		y = Array{Float64}(undef, 500)
-		v = Array{Float64}(undef, 500)
-		y1 = Array{Float64}(undef, 500)
-		q = Array{Float64}(undef, 500)
-		f = Array{Float64}(undef, 500)
-		fm = Array{Float64}(undef, 500)
-		u = Array{Float64}(undef, 500)
-		fp = Array{Float64}(undef, 500)
+		cal_type = 3
+		APPROX_CAL = 1
+		EXPER_СAL = 2
+		NUMER_CAL = 3
+
+
+		n1 = n + 1
+		y = Array{Float64}(undef, n1)
+		v = Array{Float64}(undef, n1)
+		y1 = Array{Float64}(undef, n1)
+		q = Array{Float64}(undef, n1)
+		f = Array{Float64}(undef, n1)
+		fm = Array{Float64}(undef, n1)
+		u = Array{Float64}(undef, n1)
+		fp = Array{Float64}(undef, n1)
 		y_anim = Array{Float64}[] # массив резултатов для построения анимации коллебаний
-		y_stationary = Array{Float64}(undef, 500) # массив резултатов для стационарного прогиба
-		x_stationary = Array{Float64}(undef, 500) # массив резултатов для стационарного прогиба
+		y_stationary = Array{Float64}(undef, n1) # массив резултатов для стационарного прогиба
+		x_stationary = Array{Float64}(undef, n1) # массив резултатов для стационарного прогиба
 
 
 		t_res = Float64[]
@@ -102,7 +110,6 @@ module Vibration
 
 		S_п = 3.14 * (d_п^2) / 4 # площадь поршня
 
-		n1 = n + 1
 		nm1 = n - 1
 		dx = xl0 / n
 		dx2 = dx^2
@@ -164,15 +171,23 @@ module Vibration
 			end
 
 			cf=0.
-			t_last_index = find_first_item(t_, t, t_last_index) # вспомогательная функция, находящая индекс массива результатов БГД для текущего t
-			vp = v_[t_last_index] # текущая скорость пули
-			xp = l_[t_last_index] # текущая координата пули
 
-			# приближенный расчет 
-			# tau = 0.35e-3
-			# v0 = 830
-			# vp = v0 * (1. - exp(-t / tau))
-			# xp = v0 * (t - tau * (1. -exp(-t / tau)))
+			vp = 0.0
+			xp = 0.0
+
+			if cal_type == EXPER_СAL || cal_type == NUMER_CAL
+				t_last_index = find_first_item(t_, t, t_last_index) # вспомогательная функция, находящая индекс массива результатов БГД для текущего t
+				vp = v_[t_last_index] # текущая скорость пули
+				xp = l_[t_last_index] # текущая координата пули
+			end
+
+			# приближенный расчет
+			if cal_type == APPROX_CAL
+				tau = 0.35e-3
+				v0 = 830
+				vp = v0 * (1. - exp(-t / tau))
+				xp = v0 * (t - tau * (1. -exp(-t / tau)))
+			end
 
 			if xp < xl0
 				ip=floor(Int, xp/dx)+1
@@ -185,20 +200,27 @@ module Vibration
 			end
 
 			if xp >= xm1 # если коорданата пули больше положения камеры (начался отвод газов)
+				# численный
 				p_п = p_п_[t_last_index] # давление в газовой каморе
 
 				# эксперимент
-				if p_п > 0
-					if bgd_start_flag == 0
-						t_start = t # запоминаем время начала отвода газов
-						bgd_start_flag = 1 # что бы опять не войти в этот блок
+				if cal_type == EXPER_СAL
+					if p_п > 0
+						if bgd_start_flag == 0
+							t_start = t # запоминаем время начала отвода газов
+							bgd_start_flag = 1 # что бы опять не войти в этот блок
+						end
+						index = find_first_item(t_г_э, t*10.0^3 - t_start*10.0^3, 1)
+						p_п = p_г_э[index] # давление в газовой каморе
+						p_п = p_п * 10.0^5
 					end
-					index = find_first_item(t_г_э, t*10.0^3 - t_start*10.0^3, 1)
-					p_п = p_г_э[index] # давление в газовой каморе
-					p_п = p_п * 10.0^5
 				end
+
 				# приближенный расчет
-				# p_п = 4 * 10^6
+				if cal_type == APPROX_CAL
+					p_п = 10.5 * 10^6
+				end
+
 				cme = p_п * S_п * h_г
 				qmom = 0.5 * cme / dx2 # сила от изгибающего момента
 				fp[im2-1] = fp[im2-1] - qmom
@@ -220,10 +242,16 @@ module Vibration
 			end
 
 			if flag == 200 # результатов очень много, и сохраняем только каждую 200ю
-				o = (y[n]-y[n-6])/(6*dx) * 57.2958 # находим угол наклона дульного среза (6 - для того что бы график был более гладким)
+				o = (y[n1]-y[n1-6])/(6*dx) * 57.2958 # находим угол наклона дульного среза (6 - для того что бы график был более гладким)
 				push!(o_res, o)
 				push!(t_res, t)
-				push!(y_res, y[n])
+				push!(y_res, y[n1])
+
+# 				f_sum = Array{Float64}(undef, 500)
+# 				for i in 1:n1
+# 					f_sum[i]=q[i]+g0+fp[i]
+# 				end
+
 				push!(y_anim, copy(y))
 
 				flag = 0
@@ -277,6 +305,9 @@ module Vibration
 		end
 
 		close(file)
+
+		df = DataFrames.DataFrame(x=x_res, y=y_res, o=o_res)
+		XLSX.writetable("res.xlsx", DataFrames.columns(df), DataFrames.names(df))
 
 		return Dict(
 			"x" => x_res,
