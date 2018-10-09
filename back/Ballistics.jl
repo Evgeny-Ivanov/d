@@ -1,6 +1,8 @@
 module Ballistics
+    include("Constants.jl")
+
     using DifferentialEquations: ODEProblem, RK4, solve
-    using Constants: ρ_воздуха, p_а
+    using .Constants: ρ_воздуха, p_а
 
     function cal_ballistics(; # функция расчета газового двигателя
         d = required, # калибр, м

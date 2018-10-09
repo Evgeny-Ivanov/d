@@ -1,5 +1,3 @@
-push!(LOAD_PATH, ".")
-
 using Ballistics
 
 a = cal_ballistics(

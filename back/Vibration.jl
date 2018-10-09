@@ -1,8 +1,12 @@
 module Vibration
+    include("GasEngine.jl")
+    include("Helpers.jl")
+    include("experiment_data.jl")
+
 	import DataFrames, XLSX
-	using GasEngine: cal_gas_engine # импортируем из файл GasEngine функцию для расчета БГД
-	using Helpers: convert_julia_chart_arr_in_js_arr, find_first_item
-	using experiment_data: p_г_э, t_г_э # импортирум массивы экспериментальных данных
+	using .GasEngine: cal_gas_engine # импортируем из файл GasEngine функцию для расчета БГД
+	using .Helpers: convert_julia_chart_arr_in_js_arr, find_first_item
+	using .experiment_data: p_г_э, t_г_э # импортирум массивы экспериментальных данных
 
 	function cal_vibration_with_gas_engine(; # расчет задачи коллебаний для одного положения камеры вместе и БГД
 		d = required, # внутренний диаметр ствола
