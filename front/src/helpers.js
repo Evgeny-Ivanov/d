@@ -17,10 +17,10 @@
 //   return promise;
 // }
 
-export function convertJuliaChartArrInJsArr (u, index) {
-  const resultArr = [];
-  for (let i = 0; i < u.length; i++) {
-    resultArr.push(u[i][index]);
-  }
-  return resultArr;
+export function convertJuliaChartArrInJsArr(u, index) {
+    const resultArr = [];
+    for (let i = 0; i < u.length; i++) {
+        resultArr.push(u[i][index]);
+    }
+    return resultArr;
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import { Provider } from 'mobx-react';
+import {Provider} from 'mobx-react';
 import 'semantic-ui-css/semantic.min.css';
 import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
@@ -22,7 +22,7 @@ axios.defaults.timeout = 100000000000000000000000000000000000000000000;
 
 ReactDOM.hydrate(
     <Provider {...stores}>
-        <App />
+        <App/>
     </Provider>,
     document.getElementById('root'),
 );

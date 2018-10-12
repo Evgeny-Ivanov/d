@@ -1,98 +1,98 @@
-import React, { Component } from 'react';
-import { inject, observer } from 'mobx-react';
-import { Form, Message } from 'semantic-ui-react';
+import React, {Component} from 'react';
+import {inject, observer} from 'mobx-react';
+import {Form, Message} from 'semantic-ui-react';
 import Input from '../../Input';
 
 @inject('vibrationStore')
 @observer
 class GeometryForm extends Component {
-  handleChange = (e) => {
-    this.props.vibrationStore.input[e.target.name] = e.target.value;
-  };
+    handleChange = (e) => {
+        this.props.vibrationStore.input[e.target.name] = e.target.value;
+    };
 
-  render() {
-    const { input } = this.props.vibrationStore;
-    return (
-      <div className='flex-item'>
-        <Message
-          attached
-          header='Параметры необходимые для расчета коллебаний:'
-        />
-        <Form className='attached fluid segment'>
-          <Input
-            label='Модуль Юнга'
-            name='e'
-            value={input.e}
-            onChange={this.handleChange}
-          />
+    render() {
+        const {input} = this.props.vibrationStore;
+        return (
+            <div className='flex-item'>
+                <Message
+                    attached
+                    header='Параметры необходимые для расчета коллебаний:'
+                />
+                <Form className='attached fluid segment'>
+                    <Input
+                        label='Модуль Юнга'
+                        name='e'
+                        value={input.e}
+                        onChange={this.handleChange}
+                    />
 
-          <Input
-            label='плотность материала ствола'
-            dimension='кг/м³'
-            name='ro'
-            value={input.ro}
-            onChange={this.handleChange}
-          />
+                    <Input
+                        label='плотность материала ствола'
+                        dimension='кг/м³'
+                        name='ro'
+                        value={input.ro}
+                        onChange={this.handleChange}
+                    />
 
-          <Input
-            label='наружный диаметр ствола'
-            dimension='мм'
-            name='d1'
-            value={input.d1}
-            onChange={this.handleChange}
-          />
+                    <Input
+                        label='наружный диаметр ствола'
+                        dimension='мм'
+                        name='d1'
+                        value={input.d1}
+                        onChange={this.handleChange}
+                    />
 
-          <Input
-            label='масса газовой каморы'
-            dimension='кг'
-            name='q1'
-            value={input.q1}
-            onChange={this.handleChange}
-          />
+                    <Input
+                        label='масса газовой каморы'
+                        dimension='кг'
+                        name='q1'
+                        value={input.q1}
+                        onChange={this.handleChange}
+                    />
 
-          <Input
-            label='масса надульного устройства'
-            dimension='кг'
-            name='q2'
-            value={input.q2}
-            onChange={this.handleChange}
-          />
+                    <Input
+                        label='масса надульного устройства'
+                        dimension='кг'
+                        name='q2'
+                        value={input.q2}
+                        onChange={this.handleChange}
+                    />
 
-          <Input
-            label='масса пули'
-            dimension='г'
-            name='gp'
-            value={input.gp}
-            onChange={this.handleChange}
-          />
+                    <Input
+                        label='масса пули'
+                        dimension='г'
+                        name='gp'
+                        value={input.gp}
+                        onChange={this.handleChange}
+                    />
 
-          <Input
-            label='соотношение между шагом по времени и координате'
-            dimension=''
-            name='cit'
-            value={input.cit}
-            onChange={this.handleChange}
-          />
+                    <Input
+                        label='соотношение между шагом по времени и координате'
+                        dimension=''
+                        name='cit'
+                        value={input.cit}
+                        onChange={this.handleChange}
+                    />
 
-          <Input
-            label='плечо момента от силы газовой каморы'
-            dimension='мм'
-            name='h_г'
-            value={input.h_г}
-            onChange={this.handleChange}
-          />
+                    <Input
+                        label='плечо момента от силы газовой каморы'
+                        dimension='мм'
+                        name='h_г'
+                        value={input.h_г}
+                        onChange={this.handleChange}
+                    />
 
-          <Input
-            label='на сколько точек по координате разделять длину ствола'
-            dimension=''
-            name='n_dx'
-            value={input.n_dx}
-            onChange={this.handleChange}
-          />
-        </Form>
-      </div>
-    );
-  }
+                    <Input
+                        label='на сколько точек по координате разделять длину ствола'
+                        dimension=''
+                        name='n_dx'
+                        value={input.n_dx}
+                        onChange={this.handleChange}
+                    />
+                </Form>
+            </div>
+        );
+    }
 }
 
 export default GeometryForm;
