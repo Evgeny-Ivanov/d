@@ -29,20 +29,28 @@ class Chart extends Component {
         }
 
         let shapes = [];
+        let annotations = [];
         if (vertialLines) {
             for (let i = 0; i < vertialLines.length; i++) {
-                shapes.push({
-                    type: 'line',
-                    x0: vertialLines[i].value,
-                    y0: 400,
-                    x1: vertialLines[i].value,
-                    y1: 1000,
-                    line: {
-                        color: 'grey',
-                        dash: 'dot'
-                    }
-                });
+                if (!vertialLines[i].hide) {
+                    shapes.push({
+                        type: 'line',
+                        x0: vertialLines[i].value,
+                        y0: 400,
+                        x1: vertialLines[i].value,
+                        y1: 1000,
+                        line: {
+                            color: 'grey',
+                            dash: 'dot'
+                        }
+                    });
 
+                    annotations.push({
+                        x: vertialLines[i].value,
+                        y: (1000 + 400) / 2, // FIXME
+                        text: vertialLines[i].label
+                    })
+                }
             }
         }
 
@@ -54,6 +62,7 @@ class Chart extends Component {
                     width: 700,
                     title: this.props.title,
                     shapes: shapes,
+                    annotations: annotations,
                     xaxis: {
                         //title: this.props.xTitle,
                         exponentformat: 'power',

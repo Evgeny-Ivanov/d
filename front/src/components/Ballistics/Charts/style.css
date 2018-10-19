@@ -21,3 +21,7 @@
     padding-bottom: 20px !important;
     display: block;
 }
+
+.points-list-item:after {
+    display: none !important;
+}

@@ -11,7 +11,7 @@ class Results extends Component {
     state = {
         points: [
             {label: 'Свд', value: 0.62},
-            {label: 'Свд-c', value: 0.1} // TODO
+            {label: 'Свд-С', value: 0.565} // TODO
         ],
         label: '',
         value: '0.1'
@@ -30,7 +30,28 @@ class Results extends Component {
     };
 
     removePoint = (index) => {
+        let ps = [...this.state.points];
+        ps.splice(index, 1);
+        this.setState({
+            points: ps
+        });
+    };
 
+
+    removePoint = (index) => {
+        let ps = [...this.state.points];
+        ps.splice(index, 1);
+        this.setState({
+            points: ps
+        });
+    };
+
+    togglePoint = (index) => {
+        let ps = [...this.state.points];
+        ps[index].hide = !ps[index].hide;
+        this.setState({
+            points: ps
+        });
     };
 
     render() {
@@ -40,41 +61,49 @@ class Results extends Component {
                 <Charts/>
                 {rationaleLRes && rationaleLRes.l && rationaleLRes.v && (
                     <div style={{marginTop: 10}}>
-                        <div>
+                        <div style={{display: 'flex'}}>
                             <Chart x={rationaleLRes.l.slice()} y={rationaleLRes.v.slice()}
                                    vertialLines={this.state.points}/>
-                            <div style={{marginTop: 10}}>
-                                <Input labelPosition='right' type='text'>
-                                    <Label basic>Название точки</Label>
-                                    <input name="label" value={this.state.label} onChange={this.handleChange}
-                                    />
-                                </Input>
+                            <div style={{display: 'flex', flexDirection: 'column', marginLeft: 10}}>
+                                <div style={{display: 'flex'}}>
+                                    <div>
+                                        <Input labelPosition='right' type='text'>
+                                            <Label basic>Координата</Label>
+                                            <input style={{width: 60}} name="value" value={this.state.value}
+                                                   onChange={this.handleChange}/>
+                                            <Label>м</Label>
+                                        </Input>
+                                    </div>
+                                    <div>
+                                        <Input labelPosition='right' type='text' style={{marginLeft: 10}}>
+                                            <Label basic>Название точки</Label>
+                                            <input name="label" value={this.state.label} onChange={this.handleChange}/>
+                                        </Input>
+                                    </div>
+                                    <div>
+                                        <Button onClick={() => this.addPoint()} style={{marginLeft: 10}}>Добавить</Button>
+                                    </div>
+                                </div>
+                                <div>
+                                <List style={{marginTop: 20}}>
+                                    {
+                                        this.state.points.map((item, index) => (
+                                            <List.Item style={{display: 'flex', justifyContent: 'space-between',}} className="points-list-item">
+                                                <List.Content>
+                                                    <List.Header>{item.label}</List.Header>
+                                                    {item.value}
+                                                </List.Content>
+                                                <List.Content>
+                                                    <Button onClick={() => this.togglePoint(index)}>{item.hide ? 'Показать' : 'Скрыть'}</Button>
+                                                    <Button onClick={() => this.removePoint(index)}>Удалить</Button>
+                                                </List.Content>
+                                            </List.Item>
+                                        ))
+                                    }
+                                </List>
+                                </div>
                             </div>
-                            <div style={{marginTop: 10}}>
-                                <Input labelPosition='right' type='text'>
-                                    <Label basic>Координата</Label>
-                                    <input name="value" value={this.state.value} onChange={this.handleChange}
-                                    />
-                                    <Label>м</Label>
-                                </Input>
-                            </div>
-                            <Button onClick={() => this.addPoint()}>Add</Button>
                         </div>
-                        <List>
-                            {
-                                this.state.points.map((item) => (
-                                    <List.Item>
-                                        <List.Content>
-                                            <List.Header>{item.label}</List.Header>
-                                            {item.value}
-                                        </List.Content>
-                                        <List.Content floated='right'>
-                                            <Button>Add</Button>
-                                        </List.Content>
-                                    </List.Item>
-                                ))
-                            }
-                        </List>
                     </div>
                 )}
             </div>
