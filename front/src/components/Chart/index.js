@@ -10,7 +10,6 @@ class Chart extends Component {
             mode: 'lines+points',
             x: x,
             y: y,
-            marker: {color: 'red'},
             line: {shape: 'spline'},
         }];
 
@@ -22,7 +21,6 @@ class Chart extends Component {
                     mode: 'lines+points',
                     x: xArr[i],
                     y: yArr[i],
-                    marker: {color: 'red'},
                     line: {shape: 'spline'},
                 });
             }
