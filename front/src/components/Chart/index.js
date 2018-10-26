@@ -29,14 +29,17 @@ class Chart extends Component {
         let shapes = [];
         let annotations = [];
         if (vertialLines) {
+            var maxY = Math.max(...y);
+            var minY = Math.min(...y);
+
             for (let i = 0; i < vertialLines.length; i++) {
                 if (!vertialLines[i].hide) {
                     shapes.push({
                         type: 'line',
                         x0: vertialLines[i].value,
-                        y0: 400,
+                        y0: minY,
                         x1: vertialLines[i].value,
-                        y1: 1000,
+                        y1: maxY,
                         line: {
                             color: 'grey',
                             dash: 'dot'
@@ -44,8 +47,10 @@ class Chart extends Component {
                     });
 
                     annotations.push({
+                        ax: 6 + (3.5 * vertialLines[i].label.length),
+                        ay: -40,
                         x: vertialLines[i].value,
-                        y: (1000 + 400) / 2, // FIXME
+                        y: (maxY + minY) / 2,
                         text: vertialLines[i].label
                     })
                 }
@@ -56,17 +61,17 @@ class Chart extends Component {
             <Plot
                 data={data}
                 layout={{
-                    height: 400,
-                    width: 700,
+                    height: this.props.height || 400,
+                    width: this.props.width || 700,
                     title: this.props.title,
                     shapes: shapes,
                     annotations: annotations,
                     xaxis: {
-                        //title: this.props.xTitle,
+                        title: this.props.xTitle,
                         exponentformat: 'power',
                     },
                     yaxis: {
-                        //title: this.props.yTitle,
+                        title: this.props.yTitle,
                         exponentformat: 'power',
                     },
                 }}

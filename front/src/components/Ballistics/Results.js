@@ -10,8 +10,9 @@ import {Input, Label, List, Button} from 'semantic-ui-react'
 class Results extends Component {
     state = {
         points: [
-            {label: 'Свд', value: 0.62},
-            {label: 'Свд-С', value: 0.565} // TODO
+            {label: 'СВД', value: 0.62},
+            {label: 'СВДС', value: 0.565},
+            {label: 'Винтовка Мосина', value: 0.73},
         ],
         label: '',
         value: '0.1'
@@ -63,7 +64,10 @@ class Results extends Component {
                     <div style={{marginTop: 10}}>
                         <div style={{display: 'flex'}}>
                             <Chart x={rationaleLRes.l.slice()} y={rationaleLRes.v.slice()}
-                                   vertialLines={this.state.points}/>
+                                   xTitle="Длина ствола, м" yTitle="Дульная скорость, м/c"
+                                   vertialLines={this.state.points}
+                                   height={600} width={1200}
+                            />
                             <div style={{display: 'flex', flexDirection: 'column', marginLeft: 10}}>
                                 <div style={{display: 'flex'}}>
                                     <div>
@@ -104,6 +108,7 @@ class Results extends Component {
                                 </div>
                             </div>
                         </div>
+                        <Chart vertialLines={this.state.points} x={rationaleLRes.l.slice()} y={rationaleLRes.delta.slice()} xTitle="Длина ствола, м" yTitle="Увеличение скорости, %"  height={600} width={1200} />
                     </div>
                 )}
             </div>

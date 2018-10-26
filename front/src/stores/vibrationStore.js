@@ -23,9 +23,9 @@ class VibrationStore {
         q1: 0.1, // кг, масса газовой каморы
         q2: 0.2, // кг, масса надульного устройства
         gp: 9, // г, масса пули
-        cit: 1, // соотношение между шагом по времени и координате
+        cit: 0.5, // соотношение между шагом по времени и координате
         h_г: 20, // мм, плечо момента от силы газовой каморы
-        n_dx: 50, // на сколько точек по координате разделять длину ствола
+        n_dx: 100, // на сколько точек по координате разделять длину ствола
     };
 
     @observable varInput = {
@@ -61,7 +61,7 @@ class VibrationStore {
 
     subscribeReadPercent = () => {
         this.timerId = setInterval(() => {
-            fs.readFile('.percent', 'utf8', (err, percent) => {
+            fs.readFile('../back/.percent', 'utf8', (err, percent) => {
                 if (err) return;
                 this.percent = Number(percent);
             });
@@ -70,7 +70,7 @@ class VibrationStore {
 
     unsubscribeReadPercent = () => {
         clearInterval(this.timerId);
-        fs.unlink('.percent');
+        fs.unlink('../back/.percent');
     };
 
     @action calculationVar = async () => {
@@ -82,6 +82,7 @@ class VibrationStore {
                 '/cal_var_vibration_api/',
                 {params: {...this.convertToSI(), ...gasEngineStore.convertToSI(), ...this.varInput}},
             );
+            this.percent = 100;
             this.varCharts = res.data;
         } finally {
             this.unsubscribeReadPercent();
