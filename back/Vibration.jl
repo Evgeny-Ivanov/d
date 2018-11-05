@@ -6,7 +6,7 @@ module Vibration
 	import DataFrames, XLSX
 	using .GasEngine: cal_gas_engine # импортируем из файл GasEngine функцию для расчета БГД
 	using .Helpers: convert_julia_chart_arr_in_js_arr, find_first_item
-	using .experiment_data: p_г_э, t_г_э # импортирум массивы экспериментальных данных
+	using .experiment_data: p_г_э, t_г_э, tp, pk10 ,pk70 ,pk140 ,pk210 ,pk280 ,pk350 ,pk430 ,pk510 ,pk570 # импортирум массивы экспериментальных данных
 
 	function cal_vibration_with_gas_engine(; # расчет задачи коллебаний для одного положения камеры вместе и БГД
 		d = required, # внутренний диаметр ствола
@@ -27,8 +27,8 @@ module Vibration
 		)
 		result1 = cal_gas_engine(; # считаем задачу БГД
 			kwargs...,
-			d = d, 
-			l_го = l_го, 
+			d = d,
+			l_го = l_го,
 			l_д = l_д,
 			d_п = d_п
 		)
@@ -91,6 +91,10 @@ module Vibration
 		EXPER_СAL = 2
 		NUMER_CAL = 3
 
+		with_gas_engine = true
+
+		d0 = 8 * 10^(-3)
+		d_п = 9 * 10^(-3)
 
 		n1 = n + 1
 		y = Array{Float64}(undef, n1)
@@ -109,6 +113,7 @@ module Vibration
 		t_res = Float64[]
 		o_res = Float64[]
 		y_res = Float64[]
+		v_res = Float64[]
 
 		g0 = 9.8
 
@@ -119,7 +124,7 @@ module Vibration
 		dx2 = dx^2
 		dx4 = dx^4
 		dt = cit * dx / 1.e+7
-		ci = pi * (d1^4 - d0^4) / 32. # осевой момент инерции сечения ствола
+		ci = pi * (d1^4 - d0^4) / 64 # осевой момент инерции сечения ствола
 		ei = e * ci
 		cm = ro * pi * (d1^2 - d0^2) / 4. # видимо масса на единицу длины ствола
 
@@ -147,6 +152,7 @@ module Vibration
 		u[1]=0.
 		for i in 1:n
 			u[i+1]=u[i]+0.5*(fm[i]+fm[i+1])*dx/ei
+			# u[i+1]=u[i]+fm[i+1]*dx/ei # matlab
 		end
 
 		y[1]=0.
@@ -154,6 +160,7 @@ module Vibration
 		x_stationary[1] = 0
 		for i in 1:n
 			y[i+1] = y[i]+0.5*(u[i]+u[i+1])*dx
+			# y[i+1] = y[i]+u[i]*dx # matlab
 			y_stationary[i+1] = y[i+1]
 			x_stationary[i+1] = x_stationary[i] + dx
 		end
@@ -183,6 +190,11 @@ module Vibration
 				t_last_index = find_first_item(t_, t, t_last_index) # вспомогательная функция, находящая индекс массива результатов БГД для текущего t
 				vp = v_[t_last_index] # текущая скорость пули
 				xp = l_[t_last_index] # текущая координата пули
+
+				if vp == v_[end] && xp == l_[end]
+					vp = 0
+					xp = 2
+				end
 			end
 
 			# приближенный расчет
@@ -227,13 +239,20 @@ module Vibration
 
 				cme = p_п * S_п * h_г
 				qmom = 0.5 * cme / dx2 # сила от изгибающего момента
-				fp[im2-1] = fp[im2-1] - qmom
-				fp[im2+1] = fp[im2+1] + qmom
+				if with_gas_engine
+					fp[im2-1] = fp[im2-1] - qmom
+					fp[im2+1] = fp[im2+1] + qmom
+				end
 			end
 
 			y[n1]=3.0*y[nm1]-2.0*y[n-2]
 			y[n]=2.0*y[nm1]-y[n-2]
 
+# 			y[1]=0
+# 			y[2]=0.5*(y[1]-y[3])
+# 			if y[2]<=y[1]
+# 				y[2]=y[1]
+# 			end
 
 			for i in 3:nm1 # тут и происходит основной расчет по разностной схеме
 				v1=v[i]
@@ -246,7 +265,14 @@ module Vibration
 			end
 
 			if flag == 200 # результатов очень много, и сохраняем только каждую 200ю
-				o = (y[n1]-y[n1-6])/(6*dx) * 57.2958 # находим угол наклона дульного среза (6 - для того что бы график был более гладким)
+				o = (y[n1]-y[n1-1])/(1*dx) * 57.2958 # находим угол наклона дульного среза (6 - для того что бы график был более гладким)
+
+				if length(y_res) > 0
+					push!(v_res, (y[n1] - y_res[end]) / (t - t_res[end]))
+				else
+					push!(v_res, 0)
+				end
+
 				push!(o_res, o)
 				push!(t_res, t)
 				push!(y_res, y[n1])
@@ -263,14 +289,28 @@ module Vibration
 			
 			t = t + dt
 			flag += 1
-			
+
+# 			if t > 0.0013
+# 				break
+# 			end
+
 			if xp > xl0
-				break 
-			end			
+				break
+			end
 		end
+
+
+# 		print("XLSX writetable process")
+
+# 		df = DataFrames.DataFrame(x_stationary=x_stationary, y_stationary=y_stationary, y_t_выл=y_anim[end])
+# 		XLSX.writetable("res_stat.xlsx", DataFrames.columns(df), DataFrames.names(df))
+
+# 		df = DataFrames.DataFrame(t=t_res, y=y_res, o=o_res, v=v_res)
+# 		XLSX.writetable("res_t.xlsx", DataFrames.columns(df), DataFrames.names(df))
 
 		return Dict(
 			"t" => t_res,
+			"v" => v_res,
 			"y" => y_res,
 			"o" => o_res,
 			"y_anim" => y_anim,
@@ -286,6 +326,7 @@ module Vibration
 		l_д = required, # длина ствола
 		kwargs... # остальные переменные, необходимы для решения бгд
 		)
+		is_save_file = false
 		x_res = Float64[] # массив положений газовой камеры
 		o_res = Float64[] # массив углов наклона дульного среза
 		y_res = Float64[] # массив отклонений дульного среза
@@ -295,13 +336,18 @@ module Vibration
 		xm1 = 0.02 # начальное положение для газовой камеры (для xm1=0 не считает)
 		dx = l_д / Int(n_dx_г) # шаг, для варьирования положения газовой каморы
 		i = 0
-		while xm1 < l_д # перебираем положения газовой камеры
+		flag = true
+		while xm1 <= l_д # перебираем положения газовой камеры
 			print("$i ")
 			result = cal_vibration_with_gas_engine(;kwargs..., l_го=xm1, l_д=l_д) # считаем коллебания для текущего положения газовой камеры
 			push!(x_res, xm1)
 			push!(o_res, result["o"][end]) # result["o"][end] - берет o для дульного среза (end)
 			push!(y_res, result["y"][end]) # result["н"][end] - берет y для дульного среза (end)
 			xm1 += dx
+			if flag && xm1 > l_д
+				flag = false
+				xm1 = l_д - 0.002
+			end
 			i += 1
 			seekstart(file)
 
@@ -310,8 +356,10 @@ module Vibration
 
 		close(file)
 
-		df = DataFrames.DataFrame(x=x_res, y=y_res, o=o_res)
-		XLSX.writetable("res.xlsx", DataFrames.columns(df), DataFrames.names(df))
+		if is_save_file
+			df = DataFrames.DataFrame(x=x_res, y=y_res, o=o_res)
+			XLSX.writetable("res.xlsx", DataFrames.columns(df), DataFrames.names(df))
+		end
 
 		return Dict(
 			"x" => x_res,

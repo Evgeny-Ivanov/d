@@ -47,12 +47,14 @@ class Chart extends Component {
                     });
 
                     annotations.push({
-                        ax: 6 + (3.5 * vertialLines[i].label.length),
-                        ay: -40,
+                        ax: 0,
+                        ay: 0,
                         x: vertialLines[i].value,
+                        showarrow: false,
                         y: (maxY + minY) / 2,
-                        text: vertialLines[i].label
-                    })
+                        text: `${vertialLines[i].label} (l = ${vertialLines[i].value} м.)`
+                    });
+
                 }
             }
         }
@@ -61,16 +63,21 @@ class Chart extends Component {
             <Plot
                 data={data}
                 layout={{
+                    font:{
+                        size: 14,
+                    },
                     height: this.props.height || 400,
                     width: this.props.width || 700,
                     title: this.props.title,
                     shapes: shapes,
                     annotations: annotations,
                     xaxis: {
+                        showgrid: true,
                         title: this.props.xTitle,
                         exponentformat: 'power',
                     },
                     yaxis: {
+                        showgrid: true,
                         title: this.props.yTitle,
                         exponentformat: 'power',
                     },
