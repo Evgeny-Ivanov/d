@@ -16,7 +16,7 @@ class GasEngineStore {
     @observable vars;
 
     @observable input = {
-        l_д: 0.62 - 52.07 * 10 ** -3,
+        l_д: 0.58, // 0.8 - 0.04, //0.58, //0.62 - 52.07 * 10 ** -3,
 
         ψ: 90 - 26 + 90, // угол наклона газового отверстия, в градусах
         d_ц: 9.5, // диаметр газовой трубки, мм
@@ -35,7 +35,7 @@ class GasEngineStore {
         κ: 1.173,
         λ: -0.145,
         δ: 1.6, // кг/дм^3
-        I_k: 0.245, // МПа/с
+        I_k: 0.23555, // 0.245, // МПа/с
         T_1: 2873, // К
         K_f: 0.0003,
         K_I: 0.0016,
@@ -53,7 +53,7 @@ class GasEngineStore {
         α: 45, // угол поворота выступов затвора при отпирании канала ствола, в градусах (α <= 60)
         r: 0.014, // радиус выступа затвора
 
-        μFormula: μMap.orlov, // 1 -
+        μFormula: μMap.izhevsk, // 1 -
 
         I_в: 77.84,
         T: 273 + 15,
@@ -122,7 +122,20 @@ class GasEngineStore {
         } finally {
             this.isLoading = false;
         }
+    };
+
+    @action calculationVar = async () => {
+        this.isLoading = true;
+        try {
+            const res = await axios.get('/cal_gas_engine_var_api/', {params: this.convertToSI()});
+            this.varCharts = res.data;
+        } catch (e) {
+            alert(`Ошибка: ${e.response.data}`);
+        } finally {
+            this.isLoading = false;
+        }
     }
+
 }
 
 const gasEngineStore = new GasEngineStore();

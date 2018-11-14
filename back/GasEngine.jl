@@ -1,5 +1,8 @@
 module GasEngine
+    include("Helpers.jl")
+
     using DifferentialEquations: ODEProblem, RK4, solve
+	using .Helpers: convert_julia_chart_arr_in_js_arr
 
     function cal_gas_engine(; # функция расчета газового двигателя
         l_д = required,
@@ -316,5 +319,33 @@ module GasEngine
         return run_cal()
     end
 
-export cal_gas_engine
+
+	function cal_gas_engine_var(;
+		l_го = required,
+		kwargs... # остальные переменные, необходимы для решения бгд
+		)
+		t_res = Array{Float64}[]
+		p_res = Array{Float64}[]
+
+
+        positions = [0.01, 0.07, 0.14, 0.21, 0.28, 0.35, 0.43, 0.51, 0.57]
+        for position = positions
+			result = cal_gas_engine(;kwargs..., l_го=position)
+            u = result["charts"]["u"]
+            t = result["charts"]["t"]
+            p_п = convert_julia_chart_arr_in_js_arr(u, 11) # давление в газовой камере
+
+
+			push!(t_res, t)
+			push!(p_res, p_п)
+		end
+
+		return Dict(
+			"t" => t_res,
+			"p" => p_res,
+		)
+	end
+
+
+export cal_gas_engine, cal_gas_engine_var
 end

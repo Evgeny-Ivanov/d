@@ -11,6 +11,7 @@ import μform from './Forms/μForm';
 import OtherVarForm from './Forms/OtherVarForm';
 import Vars from './Vars';
 import Charts from './Charts';
+import ChartsP from './ChartsP/ChartsP';
 import './style.css';
 
 
@@ -27,6 +28,11 @@ class Bgd extends Component {
 
     handleCalculation = async () => {
         await this.props.gasEngineStore.calculation();
+        this.setState({activeResult: true});
+    };
+
+    handleCalculationVar = async () => {
+        await this.props.gasEngineStore.calculationVar();
         this.setState({activeResult: true});
     };
 
@@ -72,6 +78,15 @@ class Bgd extends Component {
                                 >
                                     Расчет
                                 </Button>
+
+                                <Button
+                                    className='default_margin-top'
+                                    loading={isLoading}
+                                    onClick={this.handleCalculationVar}
+                                    disabled={isLoading}
+                                >
+                                    Расчет раз пол
+                                </Button>
                             </div>
                         ) : (
                             <div className='flex-container' key='2'>
@@ -84,6 +99,7 @@ class Bgd extends Component {
                                         },
                                     ]}
                                 />
+                                <ChartsP />
                             </div>
                         )
                     }

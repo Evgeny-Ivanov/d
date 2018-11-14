@@ -100,8 +100,8 @@ module Ballistics
 
 
     function cal_rationale_l(;kwargs...)
-        l_д = 0.1
-        l_д_step = 0.1
+        l_д = 0.2
+        l_д_step = 0.2
         l_д_max = 1.5
         result = Dict(
             "l" => Float64[],
@@ -109,16 +109,29 @@ module Ballistics
             "delta" => Float64[]
         )
         v_prev = 0
+        arr = []
         while l_д < l_д_max
-            res = cal_ballistics(;l_д=l_д, τ=270 - 15, kwargs...)
+            push!(arr, l_д)
+            l_д += l_д_step
+        end
+        push!(arr, 0.62)
+        push!(arr, 0.520)
+        push!(arr, 0.565)
+        push!(arr, 0.80)
+        push!(arr, 0.73)
+        push!(arr, 0.68)
+        arr = sort(arr)
+
+        l_chamber = 0.0551
+        for l_д = arr
+            res = cal_ballistics(;l_д=(l_д - l_chamber), τ=270 - 15, kwargs...)
             v = res["u"][end][5]
             delta = 100 * (v - v_prev) / v_prev # на сколько % возрасла скорость относительно предыдущего шага
             v_prev = v
             push!(result["l"], l_д)
             push!(result["v"], v)
             push!(result["delta"],  delta)
-            l_д += l_д_step
-        end
+            end
 
         return result
     end

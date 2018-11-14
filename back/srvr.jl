@@ -6,7 +6,7 @@ include("Vibration.jl")
 include("Ballistics.jl")
 
 using JuliaWebAPI: process, create_responder
-using .GasEngine: cal_gas_engine
+using .GasEngine: cal_gas_engine, cal_gas_engine_var
 using .Vibration: cal_vibration_with_gas_engine, cal_var_vibration
 using .Ballistics: cal_ballistics_for_3_t, cal_rationale_l
 
@@ -50,6 +50,11 @@ function cal_rationale_l_api(args...; kwargs...)
 	cal_rationale_l(newargs...; newkwargs...)
 end
 
+function cal_gas_engine_var_api(args...; kwargs...)
+	newargs, newkwargs = convert_to_Float64(args...; kwargs...)
+	cal_gas_engine_var(newargs...; newkwargs...)
+end
+
 Base.@ccallable function julia_main(ARGS::Vector{String})::Cint
 	# Expose functions via a ZMQ listener
 	process(create_responder([
@@ -57,7 +62,8 @@ Base.@ccallable function julia_main(ARGS::Vector{String})::Cint
 		(cal_var_vibration_api, false),
 		(cal_gas_engine_api, false),
 		(cal_ballistics_for_3_t_api, false),
-		(cal_rationale_l_api, false)
+		(cal_rationale_l_api, false),
+		(cal_gas_engine_var_api, false)
 	],
 		"tcp://127.0.0.1:9999",
 		true,

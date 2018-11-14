@@ -28,6 +28,12 @@ class Charts extends Component {
                 ),
             },
             {
+                menuItem: 'v(t)',
+                render: () => (
+                    <Chart title='v(t)' x={charts.t.slice()} y={charts.v.slice()}/>
+                ),
+            },
+            {
                 menuItem: 'y(x)',
                 render: () => (
                     <Chart title='стационарный прогиб y(x)' x={charts.x_stationary.slice()}

@@ -5,14 +5,19 @@ import Chart from "../Chart";
 import {Input, Label, List, Button} from 'semantic-ui-react'
 
 
+// 0.23555 - для такой же дульной скорости
+// rotate(-90deg)  translateY(40px)
 @inject('ballisticsStore')
 @observer
 class Results extends Component {
     state = {
         points: [
-            {label: 'СВД', value: 0.62},
+            {label: 'СВУ', value: 0.520},
             {label: 'СВДС', value: 0.565},
-            {label: 'Винтовка Мосина', value: 0.73},
+            {label: 'СВД', value: 0.62},
+            {label: 'Винтовка Мосина (Финская)', value: 0.68},
+            {label: 'Винтовка Мосина (Драгунская)', value: 0.73},
+            {label: 'Винтовка Мосина (Пехотная)', value: 0.80},
         ],
         label: '',
         value: '0.1'
@@ -66,7 +71,7 @@ class Results extends Component {
                             <Chart x={rationaleLRes.l.slice()} y={rationaleLRes.v.slice()}
                                    xTitle="Длина ствола, м" yTitle="Дульная скорость, м/c"
                                    vertialLines={this.state.points}
-                                   height={600} width={1200}
+                                   height={800} width={1600}
                             />
                             <div style={{display: 'flex', flexDirection: 'column', marginLeft: 10}}>
                                 <div style={{display: 'flex'}}>
@@ -85,30 +90,35 @@ class Results extends Component {
                                         </Input>
                                     </div>
                                     <div>
-                                        <Button onClick={() => this.addPoint()} style={{marginLeft: 10}}>Добавить</Button>
+                                        <Button onClick={() => this.addPoint()}
+                                                style={{marginLeft: 10}}>Добавить</Button>
                                     </div>
                                 </div>
                                 <div>
-                                <List style={{marginTop: 20}}>
-                                    {
-                                        this.state.points.map((item, index) => (
-                                            <List.Item style={{display: 'flex', justifyContent: 'space-between',}} className="points-list-item">
-                                                <List.Content>
-                                                    <List.Header>{item.label}</List.Header>
-                                                    {item.value}
-                                                </List.Content>
-                                                <List.Content>
-                                                    <Button onClick={() => this.togglePoint(index)}>{item.hide ? 'Показать' : 'Скрыть'}</Button>
-                                                    <Button onClick={() => this.removePoint(index)}>Удалить</Button>
-                                                </List.Content>
-                                            </List.Item>
-                                        ))
-                                    }
-                                </List>
+                                    <List style={{marginTop: 20}}>
+                                        {
+                                            this.state.points.map((item, index) => (
+                                                <List.Item style={{display: 'flex', justifyContent: 'space-between',}}
+                                                           className="points-list-item">
+                                                    <List.Content>
+                                                        <List.Header>{item.label}</List.Header>
+                                                        {item.value}
+                                                    </List.Content>
+                                                    <List.Content>
+                                                        <Button
+                                                            onClick={() => this.togglePoint(index)}>{item.hide ? 'Показать' : 'Скрыть'}</Button>
+                                                        <Button onClick={() => this.removePoint(index)}>Удалить</Button>
+                                                    </List.Content>
+                                                </List.Item>
+                                            ))
+                                        }
+                                    </List>
                                 </div>
                             </div>
                         </div>
-                        <Chart vertialLines={this.state.points} x={rationaleLRes.l.slice()} y={rationaleLRes.delta.slice()} xTitle="Длина ствола, м" yTitle="Увеличение скорости, %"  height={600} width={1200} />
+                        <Chart vertialLines={this.state.points} x={rationaleLRes.l.slice()}
+                               y={rationaleLRes.delta.slice()} xTitle="Длина ствола, м" yTitle="Увеличение скорости, %"
+                               height={800} width={1600}/>
                     </div>
                 )}
             </div>
