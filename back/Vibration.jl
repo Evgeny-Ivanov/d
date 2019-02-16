@@ -8,7 +8,7 @@ module Vibration
 	using .Helpers: convert_julia_chart_arr_in_js_arr, find_first_item
 	using .experiment_data: p_г_э, t_г_э, tp, pk10 ,pk70 ,pk140 ,pk210 ,pk280 ,pk350 ,pk430 ,pk510 ,pk570 # импортирум массивы экспериментальных данных
 
-	function cal_vibration_with_gas_engine(; # расчет задачи коллебаний для одного положения камеры вместе и БГД
+	function cal_vibration_with_gas_engine(; # расчет задачи колебаний для одного положения камеры вместе и БГД
 		d = required, # внутренний диаметр ствола
 		l_го = required, # положение газовой камеры
 		l_д = required, # длина ствола
@@ -65,7 +65,7 @@ module Vibration
 		return result2
 	end
 
-	function cal_vibration(; # расчет задачи коллебаний для одного положения газовой камеры
+	function cal_vibration(; # расчет задачи колебаний для одного положения газовой камеры
 		t_ = required, # результаты расчета бгд
 		p_ = required, # результаты расчета бгд
 		v_ = required, # результаты расчета бгд
@@ -92,6 +92,9 @@ module Vibration
 		NUMER_CAL = 3
 
 		with_gas_engine = true
+		if !with_gas_engine
+			q1 = 0.0
+		end
 
 		d0 = 8 * 10^(-3)
 		d_п = 9 * 10^(-3)
@@ -105,7 +108,7 @@ module Vibration
 		fm = Array{Float64}(undef, n1)
 		u = Array{Float64}(undef, n1)
 		fp = Array{Float64}(undef, n1)
-		y_anim = Array{Float64}[] # массив резултатов для построения анимации коллебаний
+		y_anim = Array{Float64}[] # массив резултатов для построения анимации колебаний
 		y_stationary = Array{Float64}(undef, n1) # массив резултатов для стационарного прогиба
 		x_stationary = Array{Float64}(undef, n1) # массив резултатов для стационарного прогиба
 
@@ -378,7 +381,7 @@ module Vibration
 			t = t + dt
 			flag += 1
 
-# 			if t > 0.08
+# 			if t > 0.003
 # 				break
 # 			end
 
@@ -388,11 +391,11 @@ module Vibration
 		end
 
 
-# 		print("XLSX writetable process")
+		print("XLSX writetable process")
+
+		df = DataFrames.DataFrame(x_stationary=x_stationary, y_stationary=y_stationary, y_t_выл=y_anim[end])
+		XLSX.writetable("res_stat.xlsx", DataFrames.columns(df), DataFrames.names(df))
 #
-# 		df = DataFrames.DataFrame(x_stationary=x_stationary, y_stationary=y_stationary, y_t_выл=y_anim[end])
-# 		XLSX.writetable("res_stat.xlsx", DataFrames.columns(df), DataFrames.names(df))
-# #
 # 		df = DataFrames.DataFrame(t=t_res, y=y_res, o=o_res, v=v_res)
 # 		XLSX.writetable("res_t.xlsx", DataFrames.columns(df), DataFrames.names(df))
 
@@ -409,8 +412,8 @@ module Vibration
 	end
 
 
-	function cal_var_vibration(; # функция расчета коллебаний для разных положений газовой камеры
-		n_dx_г = required, # количество положений газовой камеры, для которых будет считаться задача коллебаний
+	function cal_var_vibration(; # функция расчета колебаний для разных положений газовой камеры
+		n_dx_г = required, # количество положений газовой камеры, для которых будет считаться задача колебаний
 		l_д = required, # длина ствола
 		kwargs... # остальные переменные, необходимы для решения бгд
 		)
@@ -427,7 +430,7 @@ module Vibration
 		flag = true
 		while xm1 <= l_д # перебираем положения газовой камеры
 			print("$i ")
-			result = cal_vibration_with_gas_engine(;kwargs..., l_го=xm1, l_д=l_д) # считаем коллебания для текущего положения газовой камеры
+			result = cal_vibration_with_gas_engine(;kwargs..., l_го=xm1, l_д=l_д) # считаем колебания для текущего положения газовой камеры
 			push!(x_res, xm1)
 			push!(o_res, result["o"][end]) # result["o"][end] - берет o для дульного среза (end)
 			push!(y_res, result["y"][end]) # result["н"][end] - берет y для дульного среза (end)

@@ -73,4 +73,4 @@ Base.@ccallable function julia_main(ARGS::Vector{String})::Cint
     return 0
 end
 
-julia_main(Array{String,1}(undef, 0))
+#julia_main(Array{String,1}(undef, 0))
