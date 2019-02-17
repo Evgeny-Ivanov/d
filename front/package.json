@@ -9,6 +9,7 @@
     }
   },
   "main": "src/electron-starter.js",
+  "homepage": "",
   "dependencies": {
     "asar": "^0.14.6",
     "axios": "^0.17.1",
@@ -32,7 +33,7 @@
     "electron": "electron .",
     "start-client": "react-app-rewired start --watch",
     "start": "nf start",
-    "build": "react-app-rewired build && cp src/electron-starter.js build/main.js && cp src/prod_package.js build/package.js && cd build && electron-packager .",
+    "build": "react-app-rewired build && cp src/electron-starter.js build/main.js && cp prod_package.json build/package.json && cd build && electron-packager . && cp ../back/build/ build/public-linux-x64/resources/app/back",
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-app-rewired eject",
     "asar": "asar pack build app.asar"

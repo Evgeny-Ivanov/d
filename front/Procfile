@@ -1,2 +1,2 @@
 react: npm run start-client
-electron: wait-for-it localhost:5000 -- npm run electron
+electron: wait-for-it localhost:5000 -- REACT_APP_TEST_VAR=1 npm run electron

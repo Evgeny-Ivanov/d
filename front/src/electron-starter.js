@@ -1,4 +1,5 @@
 const electron = require('electron');
+const spawn = require('child_process').spawn;
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
@@ -25,15 +26,20 @@ function createWindow() {
         },
     });
 
-    // and load the index.html of the app.
-    mainWindow.loadURL('http://localhost:5000');
+    let bat = null;
+    if (process.env.REACT_APP_TEST_VAR) {
+        bat = spawn('/home/unicorn/work/diploma/back/build/server');
+        mainWindow.loadURL('http://localhost:5000');
+        mainWindow.webContents.openDevTools();
+    } else {
+        bat = spawn(__dirname + '/back/server');
+        mainWindow.loadURL('file://' + __dirname + '/index.html');
+    }
 
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', () => {
-
+        bat.kill('SIGINT');
         /*
          * Dereference the window object, usually you would store windows
          * in an array if your app supports multi windows, this is the time
