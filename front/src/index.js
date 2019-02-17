@@ -18,6 +18,7 @@ const stores = {
     ballisticsStore,
 };
 
+axios.defaults.baseURL = 'http://localhost:8887/';
 axios.defaults.timeout = 100000000000000000000000000000000000000000000;
 
 ReactDOM.hydrate(
