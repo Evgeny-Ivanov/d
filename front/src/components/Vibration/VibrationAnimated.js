@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button} from 'semantic-ui-react';
+import {Button, Segment} from 'semantic-ui-react';
 import Plot from 'react-plotly.js';
 import {inject, observer} from 'mobx-react';
 
@@ -66,7 +66,7 @@ class VibrationAnimated extends Component {
 
     render() {
         return (
-            <div>
+            <Segment className='result-segment' attached>
                 <Plot
                     data={[
                         {
@@ -78,8 +78,7 @@ class VibrationAnimated extends Component {
                         }
                     ]}
                     layout={{
-                        height: 700,
-                        width: 1300,
+                        width: 1200,
                         title: this.state.title,
                         xaxis: {
                             //title: this.props.xTitle,
@@ -103,7 +102,7 @@ class VibrationAnimated extends Component {
                     <Button onClick={() => this.decSpeed()}>Уменьшить скорость</Button>
                     <span style={{marginLeft: 10}}>Скорость: x{this.state.speed / 10}</span>
                 </div>
-            </div>
+            </Segment>
         );
     }
 }

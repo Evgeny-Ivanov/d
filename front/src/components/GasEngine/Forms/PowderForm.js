@@ -84,7 +84,7 @@ class PowderForm extends Component {
                     />
 
                     <Input
-                        label='Какая то температура T_1'
+                        label='Температура T_1'
                         dimension='К'
                         name='T_1'
                         value={input.T_1}

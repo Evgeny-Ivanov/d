@@ -1,4 +1,2 @@
 react: npm run start-client
 electron: wait-for-it localhost:5000 -- npm run electron
-#julia1: JULIA_LOAD_PATH=/home/unicorn/work/diploma/julia julia ../julia/srvr.jl
-#julia2: julia ../julia/server.jl

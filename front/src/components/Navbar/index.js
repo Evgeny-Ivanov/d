@@ -14,7 +14,7 @@ class Navbar extends Component {
             <Menu size='large' className='navbar'>
                 <NavbarItem route={routes.ballistics}>Расчет баллистики</NavbarItem>
                 <NavbarItem route={routes.gasEngine}>Расчет бокового газового двигателя</NavbarItem>
-                <NavbarItem route={routes.vibration}>Расчет коллебаний</NavbarItem>
+                <NavbarItem route={routes.vibration}>Расчет колебаний</NavbarItem>
             </Menu>
         );
     }

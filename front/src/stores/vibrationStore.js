@@ -2,8 +2,8 @@ import {action, observable} from 'mobx';
 import axios from 'axios';
 import gasEngineStore from './gasEngineStore';
 
-const electron = window.require('electron');
-const fs = electron.remote.require('fs');
+// const electron = window.require('electron');
+// const fs = electron.remote.require('fs');
 
 class VibrationStore {
     @observable isLoading;
@@ -23,9 +23,9 @@ class VibrationStore {
         q1: 0.1, // кг, масса газовой каморы
         q2: 0.2, // кг, масса надульного устройства
         gp: 9, // г, масса пули
-        cit: 0.5, // соотношение между шагом по времени и координате
+        cit: 0.3, // соотношение между шагом по времени и координате
         h_г: 20, // мм, плечо момента от силы газовой каморы
-        n_dx: 100, // на сколько точек по координате разделять длину ствола
+        n_dx: 50, // на сколько точек по координате разделять длину ствола
     };
 
     @observable varInput = {
@@ -59,24 +59,24 @@ class VibrationStore {
         }
     };
 
-    subscribeReadPercent = () => {
-        this.timerId = setInterval(() => {
-            fs.readFile('../back/.percent', 'utf8', (err, percent) => {
-                if (err) return;
-                this.percent = Number(percent);
-            });
-        }, 500);
-    };
-
-    unsubscribeReadPercent = () => {
-        clearInterval(this.timerId);
-        fs.unlink('../back/.percent');
-    };
+    // subscribeReadPercent = () => {
+    //     this.timerId = setInterval(() => {
+    //         fs.readFile('../back/.percent', 'utf8', (err, percent) => {
+    //             if (err) return;
+    //             this.percent = Number(percent);
+    //         });
+    //     }, 500);
+    // };
+    //
+    // unsubscribeReadPercent = () => {
+    //     clearInterval(this.timerId);
+    //     fs.unlink('../back/.percent');
+    // };
 
     @action calculationVar = async () => {
         this.percent = 0;
         this.isLoadingVar = true;
-        this.subscribeReadPercent();
+        // this.subscribeReadPercent();
         try {
             const res = await axios.get(
                 '/cal_var_vibration_api/',
@@ -85,7 +85,7 @@ class VibrationStore {
             this.percent = 100;
             this.varCharts = res.data;
         } finally {
-            this.unsubscribeReadPercent();
+            // this.unsubscribeReadPercent();
             this.isLoadingVar = false;
         }
     }

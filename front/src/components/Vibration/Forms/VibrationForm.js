@@ -16,7 +16,7 @@ class GeometryForm extends Component {
             <div className='flex-item'>
                 <Message
                     attached
-                    header='Параметры необходимые для расчета коллебаний:'
+                    header='Параметры необходимые для расчета колебаний:'
                 />
                 <Form className='attached fluid segment'>
                     <Input
