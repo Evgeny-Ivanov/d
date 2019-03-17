@@ -74,6 +74,14 @@ class OtherVarForm extends Component {
                         value={input.p_0}
                         onChange={this.handleChange}
                     />
+
+                    <Input
+                        label='Длина ствола'
+                        dimension='м'
+                        name='l_д'
+                        value={input.l_д}
+                        onChange={this.handleChange}
+                    />
                 </Form>
             </div>
         );

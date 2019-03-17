@@ -5,11 +5,20 @@ import Chart from '../../Chart';
 import {convertJuliaChartArrInJsArr} from '../../../helpers';
 import './style.css';
 
-@inject('ballisticsStore')
+
+@inject('ballisticsStore', 'gasEngineStore')
 @observer
 class Charts extends Component {
+    findIndex = (arr, l) => {
+        for (let i = 0; i < arr.length; i++) {
+           if(arr[i] >= l) return i;
+        }
+        return arr.length - 1;
+    };
+
     render() {
         const {forM50, for15, for50, isLoading} = this.props.ballisticsStore;
+        const {l_д} = this.props.gasEngineStore.input;
 
         if (!forM50 || !forM50.u || !forM50.t) return null;
 
@@ -28,6 +37,10 @@ class Charts extends Component {
         const v50 = convertJuliaChartArrInJsArr(for50.u, 4);
         const l50 = convertJuliaChartArrInJsArr(for50.u, 5);
 
+        const indexM50 = this.findIndex(lM50, l_д);
+        const index15 = this.findIndex(l15, l_д);
+        const index50 = this.findIndex(l50, l_д);
+
         const panes = [
             {
                 menuItem: 'p(t)',
@@ -38,13 +51,19 @@ class Charts extends Component {
             {
                 menuItem: 'v(t)',
                 render: () => (
-                    <Chart title='v(t)' xArr={[tM50, t15, t50]} yArr={[vM50, v15, v50]}/>
+                    <Chart title='v(t)'
+                           xArr={[tM50.slice(0, indexM50), t15.slice(0, index15), t50.slice(0, index50)]}
+                           yArr={[vM50.slice(0, indexM50), v15.slice(0, index15), v50.slice(0, index50)]}
+                    />
                 ),
             },
             {
                 menuItem: 'l(t)',
                 render: () => (
-                    <Chart title='l(t)' xArr={[tM50, t15, t50]} yArr={[lM50, l15, l50]}/>
+                    <Chart title='l(t)'
+                           yArr={[lM50.slice(0, indexM50), l15.slice(0, index15), l50.slice(0, index50)]}
+                           xArr={[tM50.slice(0, indexM50), t15.slice(0, index15), t50.slice(0, index50)]}
+                    />
                 ),
             },
         ];

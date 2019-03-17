@@ -34,6 +34,7 @@ function createWindow() {
     } else {
         bat = spawn(__dirname + '/back/server');
         mainWindow.loadURL('file://' + __dirname + '/index.html');
+        mainWindow.webContents.openDevTools();
     }
 
 
