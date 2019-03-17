@@ -17,8 +17,17 @@ class Charts extends Component {
         }).isRequired,
     };
 
+    findIndex = (arr, l) => {
+        for (let i = 0; i < arr.length; i++) {
+           if(arr[i] >= l) return i;
+        }
+        return arr.length - 1;
+    };
+
+
     render() {
         const {charts, isLoading} = this.props.gasEngineStore;
+        const {l_д} = this.props.gasEngineStore.input;
 
         if (!charts.t) {
             return null;
@@ -32,6 +41,10 @@ class Charts extends Component {
         const x_п = convertJuliaChartArrInJsArr(charts.u, 9);
         const p_п = convertJuliaChartArrInJsArr(charts.u, 10);
 
+
+        const indexLд = this.findIndex(l, l_д);
+
+
         const panes = [
             {
                 menuItem: 'p(t)',
@@ -42,13 +55,13 @@ class Charts extends Component {
             {
                 menuItem: 'v(t)',
                 render: () => (
-                    <Chart title='v(t)' x={t} y={v}/>
+                    <Chart title='v(t)' x={t.slice(0, indexLд)} y={v.slice(0, indexLд)}/>
                 ),
             },
             {
                 menuItem: 'l(t)',
                 render: () => (
-                    <Chart title='l(t)' x={t} y={l}/>
+                    <Chart title='l(t)' x={t.slice(0, indexLд)} y={l.slice(0, indexLд)}/>
                 ),
             },
             {

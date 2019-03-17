@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {inject, observer} from 'mobx-react';
-import {Header, Progress, Segment, Tab} from 'semantic-ui-react';
+import {Header, Loader, Segment, Tab} from 'semantic-ui-react';
 import Chart from '../../Chart';
 import './style.css';
 
@@ -12,9 +12,9 @@ class Charts extends Component {
 
         if (isLoadingVar) {
             return (
-                <Progress percent={percent} indicating progress>
-                    Идет расчет. Это займет много времени.
-                </Progress>
+                  <Segment style={{'height': '400px'}}>
+                    <Loader active size='massive'>Идет расчет. Это займет много времени.</Loader>
+                  </Segment>
             );
         }
 

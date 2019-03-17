@@ -31,7 +31,7 @@ class Bgd extends Component {
     };
 
     render() {
-        const {isLoading, rationaleLRes} = this.props.ballisticsStore;
+        const {isLoading, rationaleLRes, for15} = this.props.ballisticsStore;
         return (
             <div>
                 <ReactCSSTransitionReplace
@@ -56,23 +56,25 @@ class Bgd extends Component {
                                     </div>
                                 </div>
 
-                                <Button
-                                    className='default_margin-top'
-                                    loading={isLoading}
-                                    onClick={this.handleCalculation}
-                                    disabled={isLoading}
-                                >
-                                    Расчет
-                                </Button>
+                                <div className="default_margin-top">
+                                    <Button
+                                        className='default_margin-top'
+                                        loading={isLoading}
+                                        onClick={this.handleCalculation}
+                                        disabled={isLoading}
+                                    >
+                                        Расчет
+                                    </Button>
 
-                                <Button
-                                    className='default_margin-top'
-                                    loading={isLoading}
-                                    onClick={this.handleCalculationRationaleL}
-                                    disabled={isLoading}
-                                >
-                                    Обоснование длины
-                                </Button>
+                                    <Button
+                                        className='default_margin-top'
+                                        loading={isLoading}
+                                        onClick={this.handleCalculationRationaleL}
+                                        disabled={isLoading}
+                                    >
+                                        Обоснование длины
+                                    </Button>
+                                </div>
                             </div>
                         ) : (
                             <div className='flex-container' key='2'>
@@ -83,7 +85,7 @@ class Bgd extends Component {
                 </ReactCSSTransitionReplace>
 
                 <div className='default_margin-top'>
-                    {(
+                    {(rationaleLRes || for15) && (
                         !this.state.activeResult
                             ? (
                                 <Button icon labelPosition='right' onClick={this.handleToggleActive}>

@@ -3,7 +3,7 @@ import Plot from 'react-plotly.js';
 
 class Chart extends Component {
     render() {
-        let {x, y, xArr, yArr, vertialLines} = this.props;
+        let {x, y, xArr, yArr, vertialLines, names} = this.props;
 
         let data = [{
             type: 'scatter',
@@ -22,6 +22,7 @@ class Chart extends Component {
                     x: xArr[i],
                     y: yArr[i],
                     line: {shape: 'spline'},
+                    name: names ? names[i] : undefined,
                 });
             }
         }

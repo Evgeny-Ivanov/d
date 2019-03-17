@@ -42,10 +42,10 @@ class Result extends Component {
                 <Table.Footer fullWidth>
                     <Table.Row>
                         <Table.HeaderCell colSpan='2'>
-                            <Button floated='right' icon labelPosition='left' color='green' size='small'
-                                    className='excel-button' onClick={() => alert('TODO')}>
-                                <Icon name='file excel outline'/> Сохранить в Excel
-                            </Button>
+                            {/*<Button floated='right' icon labelPosition='left' color='green' size='small'*/}
+                                    {/*className='excel-button' onClick={() => alert('TODO')}>*/}
+                                {/*<Icon name='file excel outline'/> Сохранить в Excel*/}
+                            {/*</Button>*/}
                         </Table.HeaderCell>
                     </Table.Row>
                 </Table.Footer>

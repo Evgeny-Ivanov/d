@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {inject, observer} from 'mobx-react';
 import Charts from './Charts';
 import Chart from "../Chart";
-import {Input, Label, List, Button} from 'semantic-ui-react'
+import {Input, Label, List, Button, Card} from 'semantic-ui-react'
 
 
 // 0.23555 - для такой же дульной скорости
@@ -12,12 +12,12 @@ import {Input, Label, List, Button} from 'semantic-ui-react'
 class Results extends Component {
     state = {
         points: [
-            {label: 'СВУ', value: 0.520},
-            {label: 'СВДС', value: 0.565},
+            // {label: 'СВУ', value: 0.520},
+            // {label: 'СВДС', value: 0.565},
             {label: 'СВД', value: 0.62},
-            {label: 'Винтовка Мосина (Финская)', value: 0.68},
-            {label: 'Винтовка Мосина (Драгунская)', value: 0.73},
-            {label: 'Винтовка Мосина (Пехотная)', value: 0.80},
+            // {label: 'Винтовка Мосина (Финская)', value: 0.68},
+            // {label: 'Винтовка Мосина (Драгунская)', value: 0.73},
+            // {label: 'Винтовка Мосина (Пехотная)', value: 0.80},
         ],
         label: '',
         value: '0.1'
@@ -68,11 +68,12 @@ class Results extends Component {
                 {rationaleLRes && rationaleLRes.l && rationaleLRes.v && (
                     <div style={{marginTop: 10}}>
                         <div style={{display: 'flex'}}>
-                            <Chart x={rationaleLRes.l.slice()} y={rationaleLRes.v.slice()}
-                                   xTitle="Длина ствола, м" yTitle="Дульная скорость, м/c"
-                                   vertialLines={this.state.points}
-                                   height={800} width={1600}
-                            />
+                            <div className="ui card" style={{'width': '700px'}}>
+                                <Chart x={rationaleLRes.l.slice()} y={rationaleLRes.v.slice()}
+                                       xTitle="Длина ствола, м" yTitle="Дульная скорость, м/c"
+                                       vertialLines={this.state.points}
+                                />
+                            </div>
                             <div style={{display: 'flex', flexDirection: 'column', marginLeft: 10}}>
                                 <div style={{display: 'flex'}}>
                                     <div>
@@ -85,7 +86,7 @@ class Results extends Component {
                                     </div>
                                     <div>
                                         <Input labelPosition='right' type='text' style={{marginLeft: 10}}>
-                                            <Label basic>Название точки</Label>
+                                            <Label basic>Название</Label>
                                             <input name="label" value={this.state.label} onChange={this.handleChange}/>
                                         </Input>
                                     </div>
@@ -116,9 +117,6 @@ class Results extends Component {
                                 </div>
                             </div>
                         </div>
-                        <Chart vertialLines={this.state.points} x={rationaleLRes.l.slice()}
-                               y={rationaleLRes.delta.slice()} xTitle="Длина ствола, м" yTitle="Увеличение скорости, %"
-                               height={800} width={1600}/>
                     </div>
                 )}
             </div>

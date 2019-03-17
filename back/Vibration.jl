@@ -393,8 +393,8 @@ module Vibration
 
 		print("XLSX writetable process")
 
-		df = DataFrames.DataFrame(x_stationary=x_stationary, y_stationary=y_stationary, y_t_выл=y_anim[end])
-		XLSX.writetable("res_stat.xlsx", DataFrames.columns(df), DataFrames.names(df))
+# 		df = DataFrames.DataFrame(x_stationary=x_stationary, y_stationary=y_stationary, y_t_выл=y_anim[end])
+# 		XLSX.writetable("res_stat.xlsx", DataFrames.columns(df), DataFrames.names(df))
 #
 # 		df = DataFrames.DataFrame(t=t_res, y=y_res, o=o_res, v=v_res)
 # 		XLSX.writetable("res_t.xlsx", DataFrames.columns(df), DataFrames.names(df))
@@ -422,7 +422,6 @@ module Vibration
 		o_res = Float64[] # массив углов наклона дульного среза
 		y_res = Float64[] # массив отклонений дульного среза
 
-		file = open(".percent", "w")
 
 		xm1 = 0.02 # начальное положение для газовой камеры (для xm1=0 не считает)
 		dx = l_д / Int(n_dx_г) # шаг, для варьирования положения газовой каморы
@@ -440,17 +439,13 @@ module Vibration
 				xm1 = l_д - 0.002
 			end
 			i += 1
-			seekstart(file)
-
-			write(file, "$(round(Int8, i * 100 / n_dx_г ))")
 		end
 
-		close(file)
 
-		if is_save_file
-			df = DataFrames.DataFrame(x=x_res, y=y_res, o=o_res)
-			XLSX.writetable("res.xlsx", DataFrames.columns(df), DataFrames.names(df))
-		end
+# 		if is_save_file
+# 			df = DataFrames.DataFrame(x=x_res, y=y_res, o=o_res)
+# 			XLSX.writetable("res.xlsx", DataFrames.columns(df), DataFrames.names(df))
+# 		end
 
 		return Dict(
 			"x" => x_res,

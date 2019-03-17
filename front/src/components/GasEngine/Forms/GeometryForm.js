@@ -67,13 +67,13 @@ class GeometryForm extends Component {
                         onChange={this.handleChange}
                     />
 
-                    <Input
-                        label='Расстояние от стенки газовой трубки до поршня'
-                        dimension='мм'
-                        name='l_пп'
-                        value={input.l_пп}
-                        onChange={this.handleChange}
-                    />
+                    {/*<Input*/}
+                        {/*label='Расстояние от стенки газовой трубки до поршня'*/}
+                        {/*dimension='мм'*/}
+                        {/*name='l_пп'*/}
+                        {/*value={input.l_пп}*/}
+                        {/*onChange={this.handleChange}*/}
+                    {/*/>*/}
                 </Form>
             </div>
         );

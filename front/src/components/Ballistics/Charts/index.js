@@ -45,7 +45,11 @@ class Charts extends Component {
             {
                 menuItem: 'p(t)',
                 render: () => (
-                    <Chart title='p(t)' xArr={[tM50, t15, t50]} yArr={[pM50, p15, p50]}/>
+                    <Chart title='p(t)'
+                           xArr={[tM50, t15, t50]}
+                           yArr={[pM50, p15, p50]}
+                           names={["t = -50 С", "t = 15 С", "t = 50 С"]}
+                    />
                 ),
             },
             {
@@ -54,6 +58,7 @@ class Charts extends Component {
                     <Chart title='v(t)'
                            xArr={[tM50.slice(0, indexM50), t15.slice(0, index15), t50.slice(0, index50)]}
                            yArr={[vM50.slice(0, indexM50), v15.slice(0, index15), v50.slice(0, index50)]}
+                           names={["t = -50 С", "t = 15 С", "t = 50 С"]}
                     />
                 ),
             },
@@ -63,6 +68,28 @@ class Charts extends Component {
                     <Chart title='l(t)'
                            yArr={[lM50.slice(0, indexM50), l15.slice(0, index15), l50.slice(0, index50)]}
                            xArr={[tM50.slice(0, indexM50), t15.slice(0, index15), t50.slice(0, index50)]}
+                           names={["t = -50 С", "t = 15 С", "t = 50 С"]}
+                    />
+                ),
+            },
+
+            {
+                menuItem: 'v(l)',
+                render: () => (
+                    <Chart title='v(l)'
+                           yArr={[vM50.slice(0, indexM50), v15.slice(0, index15), v50.slice(0, index50)]}
+                           xArr={[lM50.slice(0, indexM50), l15.slice(0, index15), l50.slice(0, index50)]}
+                           names={["t = -50 С", "t = 15 С", "t = 50 С"]}
+                    />
+                ),
+            },
+            {
+                menuItem: 'p(l)',
+                render: () => (
+                    <Chart title='p(l)'
+                           yArr={[pM50.slice(0, indexM50), p15.slice(0, index15), p50.slice(0, index50)]}
+                           xArr={[lM50.slice(0, indexM50), l15.slice(0, index15), l50.slice(0, index50)]}
+                           names={["t = -50 С", "t = 15 С", "t = 50 С"]}
                     />
                 ),
             },

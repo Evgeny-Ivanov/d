@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "easter-egg-collection": "^1.4.56",
     "electron-builder": "^20.38.5",
     "eslint-config-airbnb": "^16.1.0",
     "foreman": "^2.0.0",

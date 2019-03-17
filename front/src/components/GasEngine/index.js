@@ -70,23 +70,25 @@ class Bgd extends Component {
                                     </div>
                                 </div>
 
-                                <Button
-                                    className='default_margin-top'
-                                    loading={isLoading}
-                                    onClick={this.handleCalculation}
-                                    disabled={isLoading}
-                                >
-                                    Расчет
-                                </Button>
+                                <div className="default_margin-top">
+                                    <Button
+                                        className='default_margin-top'
+                                        loading={isLoading}
+                                        onClick={this.handleCalculation}
+                                        disabled={isLoading}
+                                    >
+                                        Расчет
+                                    </Button>
 
-                                <Button
-                                    className='default_margin-top'
-                                    loading={isLoading}
-                                    onClick={this.handleCalculationVar}
-                                    disabled={isLoading}
-                                >
-                                    Расчет раз пол
-                                </Button>
+                                    {/*<Button*/}
+                                        {/*className='default_margin-top'*/}
+                                        {/*loading={isLoading}*/}
+                                        {/*onClick={this.handleCalculationVar}*/}
+                                        {/*disabled={isLoading}*/}
+                                    {/*>*/}
+                                        {/*Расчет для разных положений камеры*/}
+                                    {/*</Button>*/}
+                                </div>
                             </div>
                         ) : (
                             <div className='flex-container' key='2'>

@@ -73,17 +73,17 @@ class Vibration extends Component {
 
                                         <div>
                                             <VibrationForm/>
-                                            <VarVibrationForm/>
+                                            {/*<VarVibrationForm/>*/}
                                         </div>
                                     </div>
 
                                     <div className='default_margin-top'>
                                         <Button onClick={this.handleCalculation} loading={isLoading}>
-                                            Расчет для текущего положения
+                                            Расчет для текущего положения камеры
                                         </Button>
-                                        <Button onClick={this.handleCalculationVar} loading={isLoadingVar}>
-                                            Расчет для разных положений
-                                        </Button>
+                                        {/*<Button onClick={this.handleCalculationVar} loading={isLoadingVar}>*/}
+                                            {/*Расчет для разных положений камеры*/}
+                                        {/*</Button>*/}
                                     </div>
                                 </div>
                             ) : (
@@ -94,9 +94,11 @@ class Vibration extends Component {
                                     <div className='default_margin-top'>
                                         <VarCharts/>
                                     </div>
-                                    <div className='default_margin-top'>
-                                        <VibrationAnimated/>
-                                    </div>
+                                    {charts && charts.y_anim && (
+                                        <div className='default_margin-top'>
+                                            <VibrationAnimated/>
+                                        </div>
+                                    )}
                                 </div>
                             )
                         }
