@@ -33,10 +33,12 @@
     "start-client": "react-app-rewired start --watch",
     "start": "nf start",
     "build": "react-app-rewired build && cp src/electron-starter.js build/main.js && cp prod_package.json build/package.json && cd build && electron-packager . && cp -r ../../back/build public-linux-x64/resources/app/back && cd .. && npm run fix-index-html",
+    "build-win": "react-app-rewired build && cp src/electron-starter.js build/main.js && cp prod_package.json build/package.json && cd build && electron-packager --platform=win32 . && cp -r ../../back/build public-win32-x64/resources/app/back && cd .. && npm run fix-index-html-win",
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-app-rewired eject",
     "asar": "asar pack build app.asar",
-    "fix-index-html": "python3 -c \"file = open('build/public-linux-x64/resources/app/index.html');text = file.read();text = text.replace('href=\\\"/', 'href=\\\"');text = text.replace('src=\\\"/', 'src=\\\"');file.close();file = open('build/public-linux-x64/resources/app/index.html', 'w');file.write(text);file.close()\""
+    "fix-index-html": "python3 -c \"file = open('build/public-linux-x64/resources/app/index.html');text = file.read();text = text.replace('href=\\\"/', 'href=\\\"');text = text.replace('src=\\\"/', 'src=\\\"');file.close();file = open('build/public-linux-x64/resources/app/index.html', 'w');file.write(text);file.close()\"",
+    "fix-index-html-win": "python3 -c \"file = open('build/public-win32-x64/resources/app/index.html');text = file.read();text = text.replace('href=\\\"/', 'href=\\\"');text = text.replace('src=\\\"/', 'src=\\\"');file.close();file = open('build/public-win32-x64/resources/app/index.html', 'w');file.write(text);file.close()\""
   },
   "devDependencies": {
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
