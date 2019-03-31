@@ -5,7 +5,7 @@ module Server
 
     using JuliaWebAPI: process, create_responder, APIInvoker, run_http
     using .GasEngine: cal_gas_engine, cal_gas_engine_var
-    using .Vibration: cal_vibration_with_gas_engine, cal_var_vibration, cal_var_vibration_l
+    using .Vibration: cal_vibration_with_gas_engine, cal_var_vibration, cal_var_vibration_l, cal_var_vibration_d
     using .Ballistics: cal_ballistics_for_3_t, cal_rationale_l
 
     function convert_to_Float64(args...; kwargs...)
@@ -58,6 +58,11 @@ module Server
         cal_var_vibration_l(newargs...; newkwargs...)
     end
 
+    function cal_var_vibration_d_api(args...; kwargs...)
+        newargs, newkwargs = convert_to_Float64(args...; kwargs...)
+        cal_var_vibration_d(newargs...; newkwargs...)
+    end
+
     function start_ZMQ_client()
         #Create the ZMQ client that talks to the ZMQ listener above
         apiclnt = APIInvoker("tcp://127.0.0.1:9999");
@@ -77,7 +82,8 @@ module Server
             (cal_ballistics_for_3_t_api, false),
             (cal_rationale_l_api, false),
             (cal_gas_engine_var_api, false),
-            (cal_var_vibration_l_api, false)
+            (cal_var_vibration_l_api, false),
+            (cal_var_vibration_d_api, false)
         ],
             "tcp://127.0.0.1:9999",
             true,

@@ -35,10 +35,18 @@ class GeometryForm extends Component {
                     />
 
                     <Input
-                        label='наружный диаметр ствола'
+                        label='наружный диаметр ствола (в начале)'
                         dimension='мм'
                         name='d1'
                         value={input.d1}
+                        onChange={this.handleChange}
+                    />
+
+                    <Input
+                        label='наружный диаметр ствола (в конце)'
+                        dimension='мм'
+                        name='d2'
+                        value={input.d2}
                         onChange={this.handleChange}
                     />
 

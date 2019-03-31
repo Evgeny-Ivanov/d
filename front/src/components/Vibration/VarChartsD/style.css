@@ -1,0 +1,23 @@
+.result-segment-d {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-right: 200px !important;
+}
+
+.result-menu-d {
+    height: 100%;
+}
+
+.result-menu-d:after {
+    content: '';
+    visibility: hidden;
+    padding-top: 20px !important;
+    display: block;
+}
+
+.result-menu-d:before {
+    content: '';
+    visibility: hidden;
+    padding-bottom: 20px !important;
+    display: block;
+}

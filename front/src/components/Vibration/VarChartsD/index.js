@@ -8,9 +8,9 @@ import './style.css';
 @observer
 class Charts extends Component {
     render() {
-        const {varChartsL, isLoadingVarL} = this.props.vibrationStore;
+        const {varChartsD, isLoadingVarD} = this.props.vibrationStore;
 
-        if (isLoadingVarL) {
+        if (isLoadingVarD) {
             return (
                   <Segment style={{'height': '400px'}}>
                     <Loader active size='massive'>Идет расчет. Это займет много времени.</Loader>
@@ -18,21 +18,21 @@ class Charts extends Component {
             );
         }
 
-        if (!varChartsL.x) {
+        if (!varChartsD.x) {
             return null;
         }
 
         const panes = [
             {
-                menuItem: 'o(x)',
+                menuItem: 'o(d)',
                 render: () => (
-                    <Chart title='o(x)' x={varChartsL.x.slice()} y={varChartsL.o.slice()}/>
+                    <Chart title='o(d)' x={varChartsD.x.slice()} y={varChartsD.o.slice()}/>
                 ),
             },
             {
-                menuItem: 'y(x)',
+                menuItem: 'y(d)',
                 render: () => (
-                    <Chart title='y(x)' x={varChartsL.x.slice()} y={varChartsL.y.slice()}/>
+                    <Chart title='y(d)' x={varChartsD.x.slice()} y={varChartsD.y.slice()}/>
                 ),
             },
         ];
@@ -40,13 +40,13 @@ class Charts extends Component {
         return (
             <div>
                 <Header as='h5' attached='top' textAlign='center'>
-                    Результаты:
+                    Результаты (перебор идет от меньшего диаметра к большему):
                 </Header>
 
-                <Segment className='result-segment-l' loading={isLoadingVarL} attached>
+                <Segment className='result-segment-d' loading={isLoadingVarD} attached>
                     <Tab
                         menu={{
-                            fluid: true, vertical: true, tabular: 'left', className: 'result-menu-l',
+                            fluid: true, vertical: true, tabular: 'left', className: 'result-menu-d',
                         }}
                         panes={panes}
                     />

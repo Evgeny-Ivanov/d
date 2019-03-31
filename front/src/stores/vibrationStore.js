@@ -12,6 +12,8 @@ class VibrationStore {
 
     @observable isLoadingVarL;
 
+    @observable isLoadingVarD;
+
     @observable percent;
 
     @observable charts = {};
@@ -20,10 +22,13 @@ class VibrationStore {
 
     @observable varChartsL = {};
 
+    @observable varChartsD = {};
+
     @observable input = {
         e: 200000, // модуль Юнга, МПа
         ro: 7800, // плотность,кг/м³
         d1: 20, // наружный диаметр ствола, мм
+        d2: 10, // наружный диаметр ствола, мм
         q1: 0.1, // кг, масса газовой каморы
         q2: 0.2, // кг, масса надульного устройства
         gp: 9, // г, масса пули
@@ -40,6 +45,7 @@ class VibrationStore {
 
             e: input.e * 10.0 ** 6,
             d1: input.d1 * 10.0 ** -3,
+            d2: input.d2 * 10.0 ** -3,
             gp: input.gp * 10.0 ** -3,
             h_г: input.h_г * 10.0 ** -3,
         };
@@ -101,6 +107,19 @@ class VibrationStore {
             this.varChartsL = res.data;
         } finally {
             this.isLoadingVarL = false;
+        }
+    };
+
+    @action calculationVarD = async () => {
+        this.isLoadingVarD = true;
+        try {
+            const res = await axios.get(
+                '/cal_var_vibration_d_api/',
+                {params: {...this.convertToSI(), ...gasEngineStore.convertToSI(), n_dx_d: 10}},
+            );
+            this.varChartsD = res.data;
+        } finally {
+            this.isLoadingVarD = false;
         }
     };
 }

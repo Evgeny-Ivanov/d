@@ -17,6 +17,8 @@ module Vibration
 		e = required, # модуль Юнга, МПа
 		ro = required, # плотность,кг/м³
 		d1 = required, # наружный диаметр ствола, мм
+        d2 = 0, # наружный диаметр ствола, мм
+        var_d = false,
 		q1 = required, # кг, масса газовой каморы
 		q2 = required, # кг, масса надульного устройства
 		gp = required, # г, масса пули
@@ -55,6 +57,8 @@ module Vibration
 			ro = ro,
 			d0 = d, # внутренний диаметр ствола
 			d1 = d1,
+            d2 = d2,
+            var_d = var_d,
 			xl0 = l_д, # длина ствола
 			q1 = q1, # массса газовой камеры
 			q2 = q2, # масса надульного устройства
@@ -80,6 +84,8 @@ module Vibration
 		ro = required, # плотность материала ствола
 		d0 = required, # внутренний диаметр ствола
 		d1 = required, # наружный диаметр ствола
+        d2 = 0, # наружный диаметр ствола
+        var_d = false,
 		xl0 = required, # длина ствола
 		q1 = required, # массса газовой камеры
 		q2 = required, # масса надульного устройства
@@ -137,9 +143,9 @@ module Vibration
 
 
 		r_ств_окр(r_ств_конца, r_окр, x_цен_окр, x) = r_ств_конца + r_окр - sqrt(r_окр^2 - (x_цен_окр - x)^2)
-		r_ств_тр(r_нач, r_кон, x_нач, x_кон, x) = r_кон - (r_кон - r_нач) * (x - x_нач) / (x_кон - x_нач) 
+		r_ств_тр(r_нач, r_кон, x_нач, x_кон, x) = r_кон - (r_кон - r_нач) * (x - x_нач) / (x_кон - x_нач)
 
-		function get_d1(x) # svd
+		function get_d1_svd(x)
 	        x = (620 * 10 ^ (-3) - xl0) + x
 			if 0 <= x < 10.5 * 10 ^ (-3)
 				return 2 * 11.27 * 10 ^ (-3)
@@ -191,6 +197,14 @@ module Vibration
 			end
 
             return 2 * r_ств_тр(8.07 * 10 ^ (-3), 7.05  * 10 ^ (-3), 617.39 * 10 ^ (-3), 620  * 10 ^ (-3), 620 * 10 ^ (-3))
+        end
+
+        function get_d1(x)
+            if var_d
+                return d1 - (x/xl0) * (d1 - d2)
+            else
+                return get_d1_svd(x)
+            end
         end
 
 		cm(x) = ro * pi * (get_d1(x)^2 - d0^2) / 4. # видимо масса на единицу длины ствола
@@ -460,6 +474,58 @@ module Vibration
 				flag = false
 				xm1 = l_max - 0.002
 			end
+			i += 1
+		end
+
+
+# 		if is_save_file
+# 			df = DataFrames.DataFrame(x=x_res, y=y_res, o=o_res)
+# 			XLSX.writetable("res.xlsx", DataFrames.columns(df), DataFrames.names(df))
+# 		end
+
+		return Dict(
+			"x" => x_res,
+			"y" => y_res,
+			"o" => o_res
+		)
+	end
+
+
+	function cal_var_vibration_d(;
+        n_dx_d = required,
+        d2 = required,
+		d1 = required, # длина ствола
+		kwargs... # остальные переменные, необходимы для решения бгд
+		)
+
+        is_reverse = d2 > d1
+
+		is_save_file = false
+		x_res = Float64[] # массив положений газовой камеры
+		o_res = Float64[] # массив углов наклона дульного среза
+		y_res = Float64[] # массив отклонений дульного среза
+
+
+        d1x, d2x = min(d1, d2), min(d1, d2)
+
+        aa = max(d1, d2)
+        bb = min(d1, d2)
+
+        dx = abs(d2 - d1) / Int(n_dx_d) # шаг, для варьирования положения газовой каморы
+		i = 0
+		flag = true
+		while d1x <= max(d1, d2) && d2x <= max(d1, d2)
+			print("$i")
+			result = cal_vibration_with_gas_engine(;kwargs..., d1=d1x, d2=d2x, var_d=true) # считаем колебания для текущего положения газовой камеры
+			push!(o_res, result["o"][end]) # result["o"][end] - берет o для дульного среза (end)
+			push!(y_res, result["y"][end]) # result["н"][end] - берет y для дульного среза (end)
+			if is_reverse
+	            push!(x_res, d1x)
+                d1x += dx
+            else
+                push!(x_res, d2x)
+                d2x += dx
+            end
 			i += 1
 		end
 

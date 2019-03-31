@@ -5,6 +5,7 @@ import ReactCSSTransitionReplace from 'react-css-transition-replace';
 import Charts from './Charts';
 import VarCharts from './VarCharts';
 import VarChartsL from './VarChartsL';
+import VarChartsD from './VarChartsD';
 import VibrationForm from './Forms/VibrationForm';
 import GeometryForm from '../GasEngine/Forms/GeometryForm';
 import TimeForm from '../GasEngine/Forms/TimeForm';
@@ -37,13 +38,18 @@ class Vibration extends Component {
         await this.props.vibrationStore.calculationVarL();
     };
 
+    handleCalculationVarD = async () => {
+        this.setState({activeResult: true});
+        await this.props.vibrationStore.calculationVarD();
+    };
+
     handleCalculation = async () => {
         await this.props.vibrationStore.calculation();
         this.setState({activeResult: true});
     };
 
     render() {
-        const {isLoading, isLoadingVar, isLoadingVarL, charts} = this.props.vibrationStore;
+        const {isLoading, isLoadingVar, isLoadingVarL, isLoadingVarD, charts, varCharts, varChartsL, varChartsD} = this.props.vibrationStore;
 
         return (
             <div>
@@ -91,6 +97,9 @@ class Vibration extends Component {
                                         <Button onClick={this.handleCalculationVarL} loading={isLoadingVarL}>
                                             Расчет для разных длин ствола
                                         </Button>
+                                        <Button onClick={this.handleCalculationVarD} loading={isLoadingVarD}>
+                                            Расчет для разных диаметров
+                                        </Button>
                                     </div>
                                 </div>
                             ) : (
@@ -104,6 +113,9 @@ class Vibration extends Component {
                                     <div className='default_margin-top'>
                                         <VarChartsL/>
                                     </div>
+                                    <div className='default_margin-top'>
+                                        <VarChartsD/>
+                                    </div>
                                     {charts && charts.y_anim && (
                                         <div className='default_margin-top'>
                                             <VibrationAnimated/>
@@ -115,7 +127,7 @@ class Vibration extends Component {
                     </ReactCSSTransitionReplace>
                 </div>
 
-                {charts.t && (
+                {(charts.t || varCharts.x || varChartsL.x || varChartsD.x) && (
                     !this.state.activeResult
                         ? (
                             <Button icon labelPosition='right' onClick={this.handleToggleActive}>
