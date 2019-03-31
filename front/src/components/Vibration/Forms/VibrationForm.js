@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {inject, observer} from 'mobx-react';
-import {Form, Message} from 'semantic-ui-react';
+import {Form, Message, Checkbox} from 'semantic-ui-react';
 import Input from '../../Input';
 
 @inject('vibrationStore')
@@ -88,6 +88,12 @@ class GeometryForm extends Component {
                         name='n_dx'
                         value={input.n_dx}
                         onChange={this.handleChange}
+                    />
+
+                    <Checkbox
+                        label='Учитывать силу от газовой камеры'
+                        onChange={() => {input.with_gas_engine = input.with_gas_engine ? 0 : 1}}
+                        checked={input.with_gas_engine}
                     />
                 </Form>
             </div>

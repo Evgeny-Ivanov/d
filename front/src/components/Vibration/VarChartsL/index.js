@@ -1,16 +1,16 @@
 import React, {Component} from 'react';
 import {inject, observer} from 'mobx-react';
 import {Header, Loader, Segment, Tab} from 'semantic-ui-react';
-import Chart from '../../Chart';
+import Chart from '../../Chart/index';
 import './style.css';
 
 @inject('vibrationStore')
 @observer
 class Charts extends Component {
     render() {
-        const {varChartsL, isLoadingVarL} = this.props.vibrationStore;
+        const {varCharts, isLoadingVar, percent} = this.props.vibrationStore;
 
-        if (isLoadingVarL) {
+        if (isLoadingVar) {
             return (
                   <Segment style={{'height': '400px'}}>
                     <Loader active size='massive'>Идет расчет. Это займет много времени.</Loader>
@@ -18,7 +18,7 @@ class Charts extends Component {
             );
         }
 
-        if (!varChartsL.x) {
+        if (!varCharts.x) {
             return null;
         }
 
@@ -26,13 +26,13 @@ class Charts extends Component {
             {
                 menuItem: 'o(t)',
                 render: () => (
-                    <Chart title='o(t)' x={varChartsL.x.slice()} y={varChartsL.o.slice()}/>
+                    <Chart title='o(x)' x={varCharts.x.slice()} y={varCharts.o.slice()}/>
                 ),
             },
             {
                 menuItem: 'y(t)',
                 render: () => (
-                    <Chart title='y(t)' x={varChartsL.x.slice()} y={varChartsL.y.slice()}/>
+                    <Chart title='y(x)' x={varCharts.x.slice()} y={varCharts.y.slice()}/>
                 ),
             },
         ];
@@ -43,10 +43,10 @@ class Charts extends Component {
                     Результаты:
                 </Header>
 
-                <Segment className='result-segment' loading={isLoadingVarL} attached>
+                <Segment className='result-segment-l' loading={isLoadingVar} attached>
                     <Tab
                         menu={{
-                            fluid: true, vertical: true, tabular: 'left', className: 'result-menu',
+                            fluid: true, vertical: true, tabular: 'left', className: 'result-menu-l',
                         }}
                         panes={panes}
                     />

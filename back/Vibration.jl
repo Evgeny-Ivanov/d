@@ -23,8 +23,10 @@ module Vibration
 		cit = required, # соотношение между шагом по времени и координате
 		h_г = required, # мм, плечо момента от силы газовой каморы
 		n_dx = required, # на сколько точек по координате разделять длину ствола
+        with_gas_engine = required,
 		kwargs... # остальные переменные, необходимы для решения бгд
 		)
+        println("cal_vibration_with_gas_engine")
 		result1 = cal_gas_engine(; # считаем задачу БГД
 			kwargs...,
 			d = d,
@@ -60,7 +62,8 @@ module Vibration
 			cit = cit, # соотношение между шагом по времени и координате
 			d_п = d_п, # диаметр поршня
 			h_г = h_г,
-			n = Int(n_dx)
+			n = Int(n_dx),
+            with_gas_engine = with_gas_engine
 		)
 		return result2
 	end
@@ -84,15 +87,17 @@ module Vibration
 		cit = required, # соотношение между шагом по времени и координате
 		d_п = required, # диаметр поршня
 		h_г = required, # плечо момента от силы газовой каморы
+        with_gas_engine = required,
 		n = required
 		)
+        println("cal_vibration")
+
 		cal_type = 3
 		APPROX_CAL = 1
 		EXPER_СAL = 2
 		NUMER_CAL = 3
 
-		with_gas_engine = true
-		if !with_gas_engine
+		if !Bool(with_gas_engine)
 			q1 = 0.0
 		end
 
@@ -111,6 +116,7 @@ module Vibration
 		y_anim = Array{Float64}[] # массив резултатов для построения анимации колебаний
 		y_stationary = Array{Float64}(undef, n1) # массив резултатов для стационарного прогиба
 		x_stationary = Array{Float64}(undef, n1) # массив резултатов для стационарного прогиба
+		prev_y = 0
 
 		t_res = Float64[]
 		o_res = Float64[]
@@ -134,7 +140,7 @@ module Vibration
 		r_ств_тр(r_нач, r_кон, x_нач, x_кон, x) = r_кон - (r_кон - r_нач) * (x - x_нач) / (x_кон - x_нач) 
 
 		function get_d1(x) # svd
-			x = (620 * 10 ^ (-3) - xl0) + x
+	        x = (620 * 10 ^ (-3) - xl0) + x
 			if 0 <= x < 10.5 * 10 ^ (-3)
 				return 2 * 11.27 * 10 ^ (-3)
 			end
@@ -180,47 +186,18 @@ module Vibration
 			if 578.6 * 10 ^ (-3) <= x < 617.39 * 10 ^ (-3)
 				return 2 * 8.07 * 10 ^ (-3)
 			end
-			if 617.39 * 10 ^ (-3) <= x <= 2 * 620 * 10 ^ (-3)
+			if 617.39 * 10 ^ (-3) <= x <= 620 * 10 ^ (-3)
 				return 2 * r_ств_тр(8.07 * 10 ^ (-3), 7.05  * 10 ^ (-3), 617.39 * 10 ^ (-3), 620  * 10 ^ (-3), x)
 			end
+
+            return 2 * r_ств_тр(8.07 * 10 ^ (-3), 7.05  * 10 ^ (-3), 617.39 * 10 ^ (-3), 620  * 10 ^ (-3), 620 * 10 ^ (-3))
         end
-
-
-
-		function get_d1_mosin(x) # mos
-			x = (800 * 10 ^ (-3) - xl0) + x
-			if 0 <= x < 2.4339 * 10 ^ (-3)
-				return 2 * 11.4 * 10 ^ (-3)
-			end
-			if 2.4339 * 10 ^ (-3) <= x < 23.65 * 10 ^ (-3)
-				return 2 * 12.42 * 10 ^ (-3)
-			end
-			if 23.65 * 10 ^ (-3) <= x < 73.66 * 10 ^ (-3)
-				return 2 * r_ств_тр(14.986 * 10 ^ (-3), 13.97 * 10 ^ (-3), 23.65 * 10 ^ (-3), 73.66 * 10 ^ (-3), x)
-			end
-			if  73.66 * 10 ^ (-3) <= x < 83.82 * 10 ^ (-3)
-				return r_ств_окр(9.81 * 10 ^ (-3), 14.122 * 10 ^ (-3), 83.58 * 10 ^ (-3), x)
-			end
-			if 83.82 * 10 ^ (-3) <= x < 798.19 * 10 ^ (-3)
-				return 2 * r_ств_тр(9.91 * 10 ^ (-3), 7.43 * 10 ^ (-3), 83.82 * 10 ^ (-3), 798.19 * 10 ^ (-3), x)
-			end
-			if 798.19 * 10 ^ (-3) <= x < 800 * 10 ^ (-3)
-				return 2 * r_ств_окр(5.52 * 10 ^ (-3), 1.905 * 10 ^ (-3), x, 798.19 * 10 ^ (-3))
-			end
-			if x >= 800 * 10 ^ (-3)
-				return 2 * 5.52 * 10 ^ (-3)
-			end
-		end
-
 
 		cm(x) = ro * pi * (get_d1(x)^2 - d0^2) / 4. # видимо масса на единицу длины ствола
 
-
-
-		for i in 1:n1 
+		for i in 1:n1
 			q[i]=cm(i * dx - dx / 2)
 			a = q[i]
-			print("$a ")
 		end
 
 		q[nm1] = cm(nm1 * dx - dx / 2) + q2 / dx
@@ -306,7 +283,7 @@ module Vibration
 				end
 			end
 
-			if xp >= xm1 # если коорданата пули больше положения камеры (начался отвод газов)
+			if xp >= xm1 && Bool(with_gas_engine) # если коорданата пули больше положения камеры (начался отвод газов)
 				# численный
 				p_п = p_п_[t_last_index] # давление в газовой каморе
 
@@ -330,10 +307,8 @@ module Vibration
 
 				cme = p_п * S_п * h_г
 				qmom = 0.5 * cme / dx2 # сила от изгибающего момента
-				if with_gas_engine
-					fp[im2-1] = fp[im2-1] - qmom
-					fp[im2+1] = fp[im2+1] + qmom
-				end
+                fp[im2-1] = fp[im2-1] - qmom
+                fp[im2+1] = fp[im2+1] + qmom
 			end
 
 			y[n1]=3.0*y[nm1]-2.0*y[n-2]
@@ -355,11 +330,14 @@ module Vibration
 				y[i]=y1[i]
 			end
 
+			if flag == 1999
+				prev_y = y[n1]
+			end
 			if flag == 2000 # результатов очень много, и сохраняем только каждую 200ю
 				o = (y[n1]-y[n1-1])/(1*dx) * 57.2958 # находим угол наклона дульного среза (6 - для того что бы график был более гладким)
 
 				if length(y_res) > 0
-					push!(v_res, (y[n1] - y_res[end]) / (t - t_res[end]))
+					push!(v_res, (y[n1] - prev_y) / dt)
 				else
 					push!(v_res, 0)
 				end
@@ -391,7 +369,7 @@ module Vibration
 		end
 
 
-		print("XLSX writetable process")
+# 		print("XLSX writetable process")
 
 # 		df = DataFrames.DataFrame(x_stationary=x_stationary, y_stationary=y_stationary, y_t_выл=y_anim[end])
 # 		XLSX.writetable("res_stat.xlsx", DataFrames.columns(df), DataFrames.names(df))
@@ -453,6 +431,51 @@ module Vibration
 			"o" => o_res
 		)
 	end
+
+
+	function cal_var_vibration_l(;
+		n_dx = required,
+		l_д = required, # длина ствола
+		kwargs... # остальные переменные, необходимы для решения бгд
+		)
+		is_save_file = false
+		x_res = Float64[] # массив положений газовой камеры
+		o_res = Float64[] # массив углов наклона дульного среза
+		y_res = Float64[] # массив отклонений дульного среза
+
+
+		xm1 = l_д / 2 # начальное положение для газовой камеры (для xm1=0 не считает)
+		l_max = 2 * l_д
+        dx = (l_max - xm1) / Int(n_dx) # шаг, для варьирования положения газовой каморы
+		i = 0
+		flag = true
+		while xm1 <= l_max # перебираем положения газовой камеры
+			print("$i ")
+			result = cal_vibration_with_gas_engine(;kwargs..., l_д=xm1, n_dx=n_dx, l_го=0.02) # считаем колебания для текущего положения газовой камеры
+			push!(x_res, xm1)
+			push!(o_res, result["o"][end]) # result["o"][end] - берет o для дульного среза (end)
+			push!(y_res, result["y"][end]) # result["н"][end] - берет y для дульного среза (end)
+			xm1 += dx
+			if flag && xm1 > l_max
+				flag = false
+				xm1 = l_max - 0.002
+			end
+			i += 1
+		end
+
+
+# 		if is_save_file
+# 			df = DataFrames.DataFrame(x=x_res, y=y_res, o=o_res)
+# 			XLSX.writetable("res.xlsx", DataFrames.columns(df), DataFrames.names(df))
+# 		end
+
+		return Dict(
+			"x" => x_res,
+			"y" => y_res,
+			"o" => o_res
+		)
+	end
+
 
 export cal_var_vibration, cal_vibration_with_gas_engine # даем возможность использовать эти функции в других файлах
 end

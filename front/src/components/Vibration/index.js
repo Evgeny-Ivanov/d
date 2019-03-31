@@ -4,8 +4,8 @@ import {Button, Icon} from 'semantic-ui-react';
 import ReactCSSTransitionReplace from 'react-css-transition-replace';
 import Charts from './Charts';
 import VarCharts from './VarCharts';
+import VarChartsL from './VarChartsL';
 import VibrationForm from './Forms/VibrationForm';
-import VarVibrationForm from './Forms/VarVibrationForm';
 import GeometryForm from '../GasEngine/Forms/GeometryForm';
 import TimeForm from '../GasEngine/Forms/TimeForm';
 import PowderForm from '../GasEngine/Forms/PowderForm';
@@ -32,13 +32,18 @@ class Vibration extends Component {
         await this.props.vibrationStore.calculationVar();
     };
 
+    handleCalculationVarL = async () => {
+        this.setState({activeResult: true});
+        await this.props.vibrationStore.calculationVarL();
+    };
+
     handleCalculation = async () => {
         await this.props.vibrationStore.calculation();
         this.setState({activeResult: true});
     };
 
     render() {
-        const {isLoading, isLoadingVar, charts} = this.props.vibrationStore;
+        const {isLoading, isLoadingVar, isLoadingVarL, charts} = this.props.vibrationStore;
 
         return (
             <div>
@@ -73,7 +78,6 @@ class Vibration extends Component {
 
                                         <div>
                                             <VibrationForm/>
-                                            {/*<VarVibrationForm/>*/}
                                         </div>
                                     </div>
 
@@ -84,6 +88,9 @@ class Vibration extends Component {
                                         <Button onClick={this.handleCalculationVar} loading={isLoadingVar}>
                                             Расчет для разных положений камеры
                                         </Button>
+                                        <Button onClick={this.handleCalculationVarL} loading={isLoadingVarL}>
+                                            Расчет для разных длин ствола
+                                        </Button>
                                     </div>
                                 </div>
                             ) : (
@@ -93,6 +100,9 @@ class Vibration extends Component {
                                     </div>
                                     <div className='default_margin-top'>
                                         <VarCharts/>
+                                    </div>
+                                    <div className='default_margin-top'>
+                                        <VarChartsL/>
                                     </div>
                                     {charts && charts.y_anim && (
                                         <div className='default_margin-top'>

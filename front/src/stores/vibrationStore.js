@@ -10,11 +10,15 @@ class VibrationStore {
 
     @observable isLoadingVar;
 
+    @observable isLoadingVarL;
+
     @observable percent;
 
     @observable charts = {};
 
     @observable varCharts = {};
+
+    @observable varChartsL = {};
 
     @observable input = {
         e: 200000, // модуль Юнга, МПа
@@ -23,13 +27,10 @@ class VibrationStore {
         q1: 0.1, // кг, масса газовой каморы
         q2: 0.2, // кг, масса надульного устройства
         gp: 9, // г, масса пули
-        cit: 0.3, // соотношение между шагом по времени и координате
+        cit: 1, //0.3, // соотношение между шагом по времени и координате
         h_г: 20, // мм, плечо момента от силы газовой каморы
-        n_dx: 50, // на сколько точек по координате разделять длину ствола
-    };
-
-    @observable varInput = {
-        n_dx_г: 50,
+        n_dx: 30, //50, // на сколько точек по координате разделять длину ствола
+        with_gas_engine: 1,
     };
 
     convertToSI = () => {
@@ -80,7 +81,7 @@ class VibrationStore {
         try {
             const res = await axios.get(
                 '/cal_var_vibration_api/',
-                {params: {...this.convertToSI(), ...gasEngineStore.convertToSI(), ...this.varInput}},
+                {params: {...this.convertToSI(), ...gasEngineStore.convertToSI(), n_dx_г: this.input.n_dx}},
             );
             this.percent = 100;
             this.varCharts = res.data;
@@ -88,7 +89,20 @@ class VibrationStore {
             // this.unsubscribeReadPercent();
             this.isLoadingVar = false;
         }
-    }
+    };
+
+    @action calculationVarL = async () => {
+        this.isLoadingVarL = true;
+        try {
+            const res = await axios.get(
+                '/cal_var_vibration_l_api/',
+                {params: {...this.convertToSI(), ...gasEngineStore.convertToSI()}},
+            );
+            this.varChartsL = res.data;
+        } finally {
+            this.isLoadingVarL = false;
+        }
+    };
 }
 
 const vibrationStore = new VibrationStore();
