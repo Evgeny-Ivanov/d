@@ -20,9 +20,9 @@ function createWindow() {
         width: 1050,
         height: 600,
         // resizable: false,
-        'node-integration': 'iframe', // and this line
-        'web-preferences': {
-            'web-security': false,
+        nodeIntegration: 'iframe', // and this line
+        webPreferences: {
+            webSecurity: false,
         },
     });
 

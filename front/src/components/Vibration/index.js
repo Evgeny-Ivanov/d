@@ -81,9 +81,9 @@ class Vibration extends Component {
                                         <Button onClick={this.handleCalculation} loading={isLoading}>
                                             Расчет для текущего положения камеры
                                         </Button>
-                                        {/*<Button onClick={this.handleCalculationVar} loading={isLoadingVar}>*/}
-                                            {/*Расчет для разных положений камеры*/}
-                                        {/*</Button>*/}
+                                        <Button onClick={this.handleCalculationVar} loading={isLoadingVar}>
+                                            Расчет для разных положений камеры
+                                        </Button>
                                     </div>
                                 </div>
                             ) : (
